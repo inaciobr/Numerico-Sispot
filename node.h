@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct {
     int posJ;
@@ -7,4 +8,4 @@ typedef struct {
     double susceptancia;
 } node;
 
-int leituraNode(char arquivo[]);
+int leituraNode(node** nodes, char arquivo[]);

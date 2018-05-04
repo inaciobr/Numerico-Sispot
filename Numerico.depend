@@ -1,19 +1,20 @@
 # depslib dependency file v1.0
-1525391767 source:d:\documentos\code\c\numerico-sispot\main.c
+1525400902 source:d:\documentos\code\c\numerico-sispot\main.c
 	<stdio.h>
 	"node.h"
 	"barra.h"
 
-1525391631 d:\documentos\code\c\numerico-sispot\node.h
+1525400401 d:\documentos\code\c\numerico-sispot\node.h
+	<stdio.h>
+	<stdlib.h>
+
+1525400932 d:\documentos\code\c\numerico-sispot\barra.h
 	<stdio.h>
 
-1525391625 d:\documentos\code\c\numerico-sispot\barra.h
-	<stdio.h>
-
-1525391621 source:d:\documentos\code\c\numerico-sispot\barra.c
+1525393275 source:d:\documentos\code\c\numerico-sispot\barra.c
 	"barra.h"
 
-1525391164 source:d:\documentos\code\c\numerico-sispot\node.c
+1525400395 source:d:\documentos\code\c\numerico-sispot\node.c
 	"node.h"
 
 1525391621 source:d:\documentos\code\c\numerico-sispot\src\barra.c

@@ -3,8 +3,16 @@
 #include "barra.h"
 
 int main() {
-    leituraBarra("Redes/1_Stevenson/1_Stevenson_DadosBarras.txt");
-    leituraNode("Redes/1_Stevenson/1_Stevenson_Ynodal.txt");
+    node *nodes = NULL;
+    barra *barras = NULL;
+    int numNodes, numBarras;
 
+    numNodes = leituraNode(&nodes, "Redes/1_Stevenson/1_Stevenson_Ynodal.txt");
+    numBarras = leituraBarra(&barras, "Redes/1_Stevenson/1_Stevenson_DadosBarras.txt");
+
+    free(nodes);
+    nodes = NULL;
+    free(barras);
+    barras = NULL;
     return 0;
 }

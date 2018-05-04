@@ -15,4 +15,4 @@ typedef struct {
     double potenciaReativa;
 } barra;
 
-int leituraBarra(char arquivo[]) ;
+int leituraBarra(barra** barras, char arquivo[]) ;
