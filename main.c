@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "node.h"
 #include "barra.h"
+#include "matriz.h"
 
 int main() {
     node *nodes = NULL;
