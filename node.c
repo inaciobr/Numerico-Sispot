@@ -19,10 +19,10 @@ int leituraNode(node **nodes, char arquivo[]) {
 
     for (int i = 0; i < N; i++) {
         fscanf(fp, "%d %d %lf %lf",
-                    &nodesArquivo[i].posJ,
-                    &nodesArquivo[i].posK,
-                    &nodesArquivo[i].condutancia,
-                    &nodesArquivo[i].susceptancia);
+                &nodesArquivo[i].posJ,
+                &nodesArquivo[i].posK,
+                &nodesArquivo[i].condutancia,
+                &nodesArquivo[i].susceptancia);
     }
 
     fclose(fp);

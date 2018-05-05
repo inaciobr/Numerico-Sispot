@@ -1,9 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 enum tipoBarra {
-    PQ,         // Tipo 0
-    PV,         // Tipo 1
-    SWING       // Tipo 2
+    B_PQ,         // Tipo 0
+    B_PV,         // Tipo 1
+    B_SWING       // Tipo 2
 };
 
 typedef struct {
