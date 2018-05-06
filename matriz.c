@@ -13,6 +13,57 @@ matriz criaMatriz(int numLinhas, int numColunas) {
     return M;
 }
 
+matriz *criaMatrizCof(matriz M, int n, int m) {
+    matriz *Mcof;
+    double** elemento = malloc((M.numColunas-1)* sizeof(double*));
+
+    for(int i = 0;i < M.numColunas - 1; i++)
+        elemento[i] = malloc((M.numLinhas-1) * sizeof(double));
+
+    for(int i = 0;i < n;i++){
+        for(int j = 0;j < m ;j++){
+            elemento[i][j] = M.elemento[i][j];
+        }
+    }
+
+    for(int i = n+1;i < M.numLinhas ;i++){
+        for(int j = 0;j < m ;j++){
+            elemento[i-1][j] = M.elemento[i][j];
+        }
+    }
+
+    for(int i = 0; i < n; i++){
+        for(int j = m;j < M.numColunas;j++){
+            elemento[i][j-1] = M.elemento[i][j];
+        }
+    }
+
+    for(int i = n;i < M.numLinhas;i++){
+        for(int j = m;j < M.numColunas;j++){
+            elemento[i-1][j-1] = M.elemento[i][j];
+        }
+    }
+
+    Mcof->elemento = elemento;
+    return Mcof;
+}
+
+///TA TOP
+matriz* multiplicaConstante(double cnst, matriz M){
+    matriz *mult;
+    double** elemento = malloc(M.numColunas* sizeof(double*));
+
+    for(int i = 0;i < M.numColunas; i++)
+        elemento[i] = malloc(M.numLinhas*sizeof(double));
+
+    for(int i=0;i<M.numLinhas;i++)
+        for(int j=0;j<M.numColunas;j++)
+            elemento[i][j] = cnst * (M.elemento[i][j]);
+
+    mult->elemento = elemento;
+    return mult;
+}
+
 void freeMatriz(matriz *M) {
     for (int i = 0; i < M->numLinhas; i++) {
         free(M->elemento[i]);
@@ -97,10 +148,43 @@ void decomposicaoLU(matriz A, matriz *L, matriz *U){
     }
 }
 
-matriz** Cofatores(matriz** matriz){
+/****TA DANDO MELDA***/
+matriz* Cofatores(matriz M){
+    matriz* cof, *cofij;
+    double** elemento = malloc(M.numColunas* sizeof(double*));
 
+    for(int i = 0;i < M.numColunas; i++)
+        elemento[i] = malloc(M.numLinhas*sizeof(double));
+
+
+    for(int i = 0;i < M.numLinhas;i++){
+        for(int j = 0;j < M.numColunas;j++){
+            cofij = criaMatrizCof(M,i,j);
+            elemento[i][j] = pow((-1),(i+j))*det(*cofij);
+        }
+    }
+    cof->elemento = elemento;
+    return cof;
 }
 
-matriz** Inversa(matriz** matriz){
+//TA OKK
+matriz* Transposta(matriz M){
+    matriz* matrizT;
+    double** elemento = malloc(M.numColunas* sizeof(double*));
+    for(int i = 0;i < M.numColunas; i++)
+        elemento[i] = malloc(M.numLinhas*sizeof(double));
 
+    for (int i = 0; i < M.numLinhas; i++) {
+        for (int j = i+1; j < M.numColunas; j++) {
+            if (j != i) {
+                elemento[i][j] = M.elemento[j][i];
+            }
+        }
+    }
+    matrizT->elemento = elemento;
+    return matrizT;
+}
+
+matriz* Inversa(matriz M){
+    return multiplicaConstante(det(M),*Transposta(*(Cofatores(M))));
 }

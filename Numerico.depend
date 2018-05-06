@@ -36,12 +36,13 @@
 1525391164 source:d:\documentos\code\c\numerico-sispot\src\node.c
 	"node.h"
 
-1525568744 source:d:\documentos\code\c\numerico-sispot\matriz.c
+1525574089 source:d:\documentos\code\c\numerico-sispot\matriz.c
 	"matriz.h"
 
-1525566805 d:\documentos\code\c\numerico-sispot\matriz.h
+1525574148 d:\documentos\code\c\numerico-sispot\matriz.h
 	<stdio.h>
 	<stdlib.h>
+	<math.h>
 
 1525557053 source:d:\meus documentos\documents\github\numerico-sispot\barra.c
 	"barra.h"
@@ -50,7 +51,7 @@
 	<stdio.h>
 	<stdlib.h>
 
-1525558952 source:d:\meus documentos\documents\github\numerico-sispot\main.c
+1525559754 source:d:\meus documentos\documents\github\numerico-sispot\main.c
 	<stdio.h>
 	"node.h"
 	"barra.h"
@@ -60,9 +61,10 @@
 	<stdio.h>
 	<stdlib.h>
 
-1525558952 d:\meus documentos\documents\github\numerico-sispot\matriz.h
+1525565364 d:\meus documentos\documents\github\numerico-sispot\matriz.h
 	<stdio.h>
 	<stdlib.h>
+	<math.h>
 
 1525557053 source:d:\meus documentos\documents\github\numerico-sispot\node.c
 	"node.h"
