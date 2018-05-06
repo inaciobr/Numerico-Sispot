@@ -7,9 +7,11 @@ typedef struct {
     double **elemento;
 } matriz;
 
-//void criaMatriz();
-double Det(matriz** matriz);
-matriz** Inversa(matriz** matriz);
-matriz** Cofatores(matriz** matriz);
-void DecomposicaoLU(matriz** A,matriz** L,matriz** U);
+matriz criaMatriz(int numLinhas, int numColunas);
+void freeMatriz(matriz *M);
+double det(matriz A);
 
+
+void decomposicaoLU(matriz A, matriz *L, matriz *U);
+matriz **Inversa(matriz **matriz);
+matriz **Cofatores(matriz **matriz);

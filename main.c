@@ -4,19 +4,28 @@
 #include "matriz.h"
 
 int main() {
-    node *nodes = NULL;
-    barra *barras = NULL;
-    int numNodes, numBarras;
+    matriz M = criaMatriz(3, 3);
+    matriz L, U;
+    double test[3][3] = { {350.0, 17.0, 45.0},
+                          {0.0, 18.0, 98.0},
+                          {15.0, 32.0, 103.0} };
 
-    numNodes = leituraNode(&nodes, "Redes/1_Stevenson/1_Stevenson_Ynodal.txt");
-    numBarras = leituraBarra(&barras, "Redes/1_Stevenson/1_Stevenson_DadosBarras.txt");
+    for (int i = 0; i < M.numLinhas; i ++)
+        for (int j = 0; j <  M.numColunas; j++)
+            M.elemento[i][j] = test[i][j];
 
-    printf("%d, %d", nodes[numNodes - 1].posJ, barras[numBarras - 1].id);
+    decomposicaoLU(M, &L, &U);
 
-    free(nodes);
-    nodes = NULL;
-    free(barras);
-    barras = NULL;
+    printf ("%d, %d\n", M.numLinhas, M.numColunas);
+    for (int i = 0; i < M.numLinhas; i ++) {
+        for (int j = 0; j <  M.numColunas; j++)
+            printf("%10.4lf ", U.elemento[i][j]);
+        printf("\n");
+    }
+
+    printf("%lf", det(M));
+
+
 
     return 0;
 }

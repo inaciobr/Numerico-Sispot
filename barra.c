@@ -18,7 +18,31 @@ int leituraBarra(barra **barras, char arquivo[]) {
     }
 
     for (int i = 0; i < N; i++) {
+        fscanf(fp, "%d %d %lf",
+                &barrasArquivo[i].id,
+                &barrasArquivo[i].tipo,
+                &barrasArquivo[i].tensaoNominal);
 
+        switch (barrasArquivo[i].tipo) {
+        case B_PQ:
+            fscanf(fp, "%lf %lf",
+                    &barrasArquivo[i].potenciaAtiva,
+                    &barrasArquivo[i].potenciaReativa);
+            break;
+
+        case B_PV:
+            fscanf(fp, "%lf %lf",
+                    &barrasArquivo[i].potenciaAtiva,
+                    &barrasArquivo[i].tensaoNominal);
+            barrasArquivo[i].potenciaAtiva = -barrasArquivo[i].potenciaAtiva;
+            break;
+
+        case B_SWING:
+            fscanf(fp, "%lf %lf",
+                    &barrasArquivo[i].tensaoNominal,
+                    &barrasArquivo[i].anguloTensao);
+            break;
+        }
     }
 
     fclose(fp);
