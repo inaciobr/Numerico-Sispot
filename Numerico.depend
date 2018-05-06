@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1525568335 source:d:\documentos\code\c\numerico-sispot\main.c
+1525575144 source:d:\documentos\code\c\numerico-sispot\main.c
 	<stdio.h>
 	"node.h"
 	"barra.h"
@@ -36,10 +36,10 @@
 1525391164 source:d:\documentos\code\c\numerico-sispot\src\node.c
 	"node.h"
 
-1525574089 source:d:\documentos\code\c\numerico-sispot\matriz.c
+1525575140 source:d:\documentos\code\c\numerico-sispot\matriz.c
 	"matriz.h"
 
-1525574148 d:\documentos\code\c\numerico-sispot\matriz.h
+1525575241 d:\documentos\code\c\numerico-sispot\matriz.h
 	<stdio.h>
 	<stdlib.h>
 	<math.h>

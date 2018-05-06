@@ -5,6 +5,7 @@
 
 int main() {
     matriz M = criaMatriz(3, 3);
+    matriz kM;
     matriz L, U;
     double test[3][3] = { {350.0, 17.0, 45.0},
                           {0.0, 18.0, 98.0},
@@ -16,10 +17,12 @@ int main() {
 
     decomposicaoLU(M, &L, &U);
 
+    kM = transposta(M);
+
     printf ("%d, %d\n", M.numLinhas, M.numColunas);
     for (int i = 0; i < M.numLinhas; i ++) {
         for (int j = 0; j <  M.numColunas; j++)
-            printf("%10.4lf ", U.elemento[i][j]);
+            printf("%10.4lf ", kM.elemento[i][j]);
         printf("\n");
     }
 
