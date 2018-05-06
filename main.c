@@ -17,11 +17,11 @@ int main() {
 
     decomposicaoLU(M, &L, &U);
 
-    kM = transposta(M);
+    kM = inversa(M);
 
     printf ("%d, %d\n", M.numLinhas, M.numColunas);
-    for (int i = 0; i < M.numLinhas; i ++) {
-        for (int j = 0; j <  M.numColunas; j++)
+    for (int i = 0; i < kM.numLinhas; i ++) {
+        for (int j = 0; j <  kM.numColunas; j++)
             printf("%10.4lf ", kM.elemento[i][j]);
         printf("\n");
     }
