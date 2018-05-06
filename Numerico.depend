@@ -47,7 +47,7 @@
 	<stdio.h>
 	<stdlib.h>
 
-1525558952 source:d:\meus documentos\documents\github\numerico-sispot\main.c
+1525559754 source:d:\meus documentos\documents\github\numerico-sispot\main.c
 	<stdio.h>
 	"node.h"
 	"barra.h"
@@ -57,9 +57,10 @@
 	<stdio.h>
 	<stdlib.h>
 
-1525558952 d:\meus documentos\documents\github\numerico-sispot\matriz.h
+1525565364 d:\meus documentos\documents\github\numerico-sispot\matriz.h
 	<stdio.h>
 	<stdlib.h>
+	<math.h>
 
 1525557053 source:d:\meus documentos\documents\github\numerico-sispot\node.c
 	"node.h"
