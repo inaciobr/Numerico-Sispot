@@ -43,28 +43,30 @@
 	<stdio.h>
 	<stdlib.h>
 
-1525557053 source:d:\meus documentos\documents\github\numerico-sispot\barra.c
+1525656716 source:d:\meus documentos\documents\github\numerico-sispot\barra.c
 	"barra.h"
 
-1525557053 d:\meus documentos\documents\github\numerico-sispot\barra.h
+1525656716 d:\meus documentos\documents\github\numerico-sispot\barra.h
 	<stdio.h>
 	<stdlib.h>
 
-1525559754 source:d:\meus documentos\documents\github\numerico-sispot\main.c
+1525664820 source:d:\meus documentos\documents\github\numerico-sispot\main.c
 	<stdio.h>
 	"node.h"
 	"barra.h"
 	"matriz.h"
 
-1525557053 d:\meus documentos\documents\github\numerico-sispot\node.h
+1525656716 d:\meus documentos\documents\github\numerico-sispot\node.h
 	<stdio.h>
 	<stdlib.h>
 
-1525565364 d:\meus documentos\documents\github\numerico-sispot\matriz.h
+1525662978 d:\meus documentos\documents\github\numerico-sispot\matriz.h
 	<stdio.h>
 	<stdlib.h>
-	<math.h>
 
-1525557053 source:d:\meus documentos\documents\github\numerico-sispot\node.c
+1525656716 source:d:\meus documentos\documents\github\numerico-sispot\node.c
 	"node.h"
+
+1525664847 source:d:\meus documentos\documents\github\numerico-sispot\matriz.c
+	"matriz.h"
 

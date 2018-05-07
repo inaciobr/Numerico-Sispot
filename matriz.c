@@ -140,3 +140,14 @@ matriz inversa(matriz M) {
 
     return inversa;
 }
+
+matriz multVetor(matriz M, matriz v){
+    matriz mult = criaMatriz(M.numLinhas, v.numColunas);
+
+    for (int i = 0; i < M.numLinhas ; i++)
+        for (int j = 0; j < v.numColunas ; j++)
+                for(int k = 0; k < M.numColunas;k++)
+                    mult.elemento[i][j] += M.elemento[i][k]*v.elemento[k][j];
+
+    return mult;
+}

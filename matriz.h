@@ -20,3 +20,4 @@ matriz decomposicaoLU(matriz A, int **permutacoes);
 matriz matrizCofatores(matriz A, int n, int m);
 matriz cofatores(matriz M);
 matriz inversa(matriz M);
+matriz multVetor(matriz M, matriz v);
