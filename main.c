@@ -6,27 +6,31 @@
 int main() {
     matriz M = criaMatriz(3, 3);
     matriz kM;
-    matriz L, U;
-    double test[3][3] = { {350.0, 17.0, 45.0},
-                          {0.0, 18.0, 98.0},
-                          {15.0, 32.0, 103.0} };
+    matriz LU;
+    double test[3][3] = { {12.0, 41.0, 13.0},
+                          {42.0, 73.0, 78.0},
+                          {52.0, 46.0, 15.0} };
 
     for (int i = 0; i < M.numLinhas; i ++)
         for (int j = 0; j <  M.numColunas; j++)
             M.elemento[i][j] = test[i][j];
 
-    decomposicaoLU(M, &L, &U);
+    int *P;
+    LU = decomposicaoLU(M, &P);
 
     kM = inversa(M);
 
     printf ("%d, %d\n", M.numLinhas, M.numColunas);
     for (int i = 0; i < kM.numLinhas; i ++) {
         for (int j = 0; j <  kM.numColunas; j++)
-            printf("%10.4lf ", kM.elemento[i][j]);
+            printf("%10.4lf ", LU.elemento[i][j]);
         printf("\n");
     }
 
-    printf("%lf", det(M));
+    for (int i = 0; i < LU.numColunas; i++)
+        printf("- %d\n", P[i]);
+
+    printf("%lf", det(LU));
 
 
 
