@@ -8,7 +8,7 @@ matriz criaMatriz(int numLinhas, int numColunas) {
     M.elemento = malloc(numLinhas * sizeof(double *));
 
     for (int i = 0; i < numLinhas; i++)
-        M.elemento[i] = malloc(numColunas * sizeof(double));
+        M.elemento[i] = calloc(numColunas, sizeof(double));
 
     return M;
 }
@@ -69,9 +69,6 @@ matriz copiaMatriz(matriz M) {
 matriz decomposicaoLU(matriz A, int **permutacoes) {
     matriz LU = copiaMatriz(A);
     int *P = malloc((A.numLinhas + 1) * sizeof(double));
-    for (int i = 0; i < A.numLinhas + 1; i++) {
-        P[i] = i;
-    }
     P[A.numLinhas] = 0;
 
     for (int k = 0; k < A.numLinhas; k++) {
@@ -91,7 +88,6 @@ matriz decomposicaoLU(matriz A, int **permutacoes) {
             double *temp = LU.elemento[k];
             LU.elemento[k] = LU.elemento[P[k]];
             LU.elemento[P[k]] = temp;
-            P[P[k]] = k;
 
             P[A.numLinhas]++;
         }
@@ -108,11 +104,25 @@ matriz decomposicaoLU(matriz A, int **permutacoes) {
     return LU;
 }
 
+matriz permutaLinhasMatriz(matriz A, int *P) {
+    matriz M = copiaMatriz(A);
+
+    for (int i = 0; i < M.numLinhas; i++) {
+        if (i != P[i]) {
+            double *temp = M.elemento[i];
+            M.elemento[i] = M.elemento[P[i]];
+            M.elemento[P[i]] = temp;
+        }
+    }
+
+    return M;
+}
+
 matriz matrizCofatores(matriz M, int linha, int coluna) {
     matriz MCofatores = criaMatriz(M.numLinhas - 1, M.numColunas - 1);
 
     for (int i = 0; i < M.numLinhas; i++)
-        for(int j = 0; j < M.numColunas; j++)
+        for (int j = 0; j < M.numColunas; j++)
             if (i != linha && j != coluna)
                 MCofatores.elemento[(i <= linha ? i : i - 1)][(j <= coluna ? j : j - 1)] = M.elemento[i][j];
 
@@ -141,13 +151,13 @@ matriz inversa(matriz M) {
     return inversa;
 }
 
-matriz multVetor(matriz M, matriz v){
-    matriz mult = criaMatriz(M.numLinhas, v.numColunas);
+matriz produtoMatriz(matriz A, matriz B){
+    matriz produto = criaMatriz(A.numLinhas, B.numColunas);
 
-    for (int i = 0; i < M.numLinhas ; i++)
-        for (int j = 0; j < v.numColunas ; j++)
-                for(int k = 0; k < M.numColunas;k++)
-                    mult.elemento[i][j] += M.elemento[i][k]*v.elemento[k][j];
+    for (int i = 0; i < A.numLinhas ; i++)
+        for (int j = 0; j < B.numColunas ; j++)
+                for (int k = 0; k < A.numColunas; k++)
+                    produto.elemento[i][j] += A.elemento[i][k] * B.elemento[k][j];
 
-    return mult;
+    return produto;
 }
