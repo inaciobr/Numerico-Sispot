@@ -7,9 +7,9 @@ int main() {
     matriz M = criaMatriz(3, 3);
     matriz kM;
     matriz LU;
-    double test[3][3] = { {12.0, 41.0, 13.0},
-                          {42.0, 73.0, 78.0},
-                          {52.0, 46.0, 15.0} };
+    double test[3][3] = { {1.0, 2.0, 1.0},
+                          {1.0, 1.0, 2.0},
+                          {2.0, 1.0, 1.0} };
 
     for (int i = 0; i < M.numLinhas; i ++)
         for (int j = 0; j <  M.numColunas; j++)
@@ -30,7 +30,7 @@ int main() {
     for (int i = 0; i < LU.numColunas; i++)
         printf("- %d\n", P[i]);
 
-    printf("%lf", det(LU));
+    printf("%lf", det(M));
 
 
 

@@ -34,14 +34,16 @@ matriz multiplicaConstante(matriz M, double constante) {
 double det(matriz A) {
     int *P;
     matriz LU = decomposicaoLU(A, &P);
+    int N = P[A.numLinhas];
 
     double det = 1;
-    for (int i = 0; i < LU.numColunas ;i++)
+    for (int i = 0; i < A.numLinhas; i++)
         det *= LU.elemento[i][i];
 
     freeMatriz(LU);
+    free(P);
 
-    return det;
+    return det * (N%2 ? -1 : 1);
 }
 
 matriz transposta(matriz M) {
@@ -66,7 +68,11 @@ matriz copiaMatriz(matriz M) {
 
 matriz decomposicaoLU(matriz A, int **permutacoes) {
     matriz LU = copiaMatriz(A);
-    int *P = malloc(A.numLinhas * sizeof(double));
+    int *P = malloc((A.numLinhas + 1) * sizeof(double));
+    for (int i = 0; i < A.numLinhas + 1; i++) {
+        P[i] = i;
+    }
+    P[A.numLinhas] = 0;
 
     for (int k = 0; k < A.numLinhas; k++) {
         double maxPivo = -1.0;
@@ -85,6 +91,9 @@ matriz decomposicaoLU(matriz A, int **permutacoes) {
             double *temp = LU.elemento[k];
             LU.elemento[k] = LU.elemento[P[k]];
             LU.elemento[P[k]] = temp;
+            P[P[k]] = k;
+
+            P[A.numLinhas]++;
         }
 
         for (int j = k + 1; j < A.numLinhas; j++) {
