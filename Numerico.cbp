@@ -46,6 +46,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="node.h" />
+		<Unit filename="numerico.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="numerico.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

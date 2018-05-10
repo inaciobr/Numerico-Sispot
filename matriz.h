@@ -1,3 +1,6 @@
+#ifndef MATRIZ_H_INCLUDED
+#define MATRIZ_H_INCLUDED
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -22,3 +25,5 @@ matriz decomposicaoLU(matriz A, int **permutacoes);
 matriz permutaLinhasMatriz(matriz A, int *P);
 matriz matrizCofatores(matriz A, int n, int m);
 matriz cofatores(matriz M);
+
+#endif // MATRIZ_H_INCLUDED

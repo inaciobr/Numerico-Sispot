@@ -2,50 +2,48 @@
 #include "node.h"
 #include "barra.h"
 #include "matriz.h"
+#include "numerico.h"
+
+double* dF1(double* x) {
+    double *r = malloc(3*sizeof(double));
+
+    r[0] = 3;
+    r[1] = x[2]*sin(x[1]*x[2]);
+    r[2] = x[1]*sin(x[1]*x[2]);
+
+    return r;
+}
+
+double* dF2(double* x) {
+    double *r = malloc(3*sizeof(double));
+
+    r[0] = 2*x[0];
+    r[1] = -162*(x[1] + 0.1);
+    r[2] = cos(x[2]);
+
+    return r;
+}
+
+double* dF3(double* x) {
+    double *r = malloc(3*sizeof(double));
+
+    r[0] = -x[1]*exp(-x[0]*x[1]);
+    r[1] = -x[0]*exp(-x[0]*x[1]);
+    r[2] = 20;
+
+    return r;
+}
 
 int main() {
-    matriz M = criaMatriz(3, 3);
-    matriz v = criaMatriz(3, 1);
-    matriz kM;
-    matriz LU;
+    double x[3] = {0.1, 0.1, -0.1};
 
-    double test[3][3] = { {1.0, 2.0, 1.0},
-                          {1.0, 1.0, 2.0},
-                          {2.0, 1.0, 1.0} };
-    double vec[3][1] = { {0.0},
-                         {1.0},
-                         {2.0} };
+    matriz M = matrizJacobiana(x, &dF1, &dF2, &dF3);
 
-    for (int i = 0; i < M.numLinhas; i ++)
-        for (int j = 0; j <  M.numColunas; j++)
-            M.elemento[i][j] = test[i][j];
-
-    for (int i = 0; i < v.numLinhas; i ++)
-        for (int j = 0; j <  v.numColunas; j++)
-            v.elemento[i][j] = vec[i][j];
-
-    //LU = produtoMatriz(M,v);
-
-
-    int *P;
-    LU = decomposicaoLU(M, &P);
-    LU = permutaLinhasMatriz(v, P);
-/*
-    kM = inversa(M);
-**/
-    printf ("%d, %d\n", LU.numLinhas, LU.numColunas);
-    for (int i = 0; i < LU.numLinhas; i ++) {
-        for (int j = 0; j <  LU.numColunas; j++)
-            printf("%10.4f ", LU.elemento[i][j]);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++)
+            printf("%15.8lf ", M.elemento[i][j]);
         printf("\n");
     }
- /**
-    for (int i = 0; i < LU.numColunas; i++)
-        printf("- %d\n", P[i]);
 
-    printf("%lf", det(M));
-
-
-**/
     return 0;
 }

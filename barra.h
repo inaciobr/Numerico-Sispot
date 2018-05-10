@@ -1,3 +1,6 @@
+#ifndef BARRA_H_INCLUDED
+#define BARRA_H_INCLUDED
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -17,3 +20,6 @@ typedef struct {
 } barra;
 
 int leituraBarra(barra** barras, char arquivo[]) ;
+
+
+#endif // BARRA_H_INCLUDED
