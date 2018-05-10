@@ -1,11 +1,17 @@
 #include "numerico.h"
 
-matriz matrizJacobiana(double *x, double* (*dF1)(double x[]), double* (*dF2)(double x[]), double* (*dF3)(double x[])) {
-    matriz Jacobiana = criaMatriz(3, 3);
+matriz matrizFuncao(int numX, double *x, int numF, ...) {
+    va_list valist;
+    matriz funcao = criaMatriz(numF, numX);
 
-    Jacobiana.elemento[0] = dF1(x);
-    Jacobiana.elemento[1] = dF2(x);
-    Jacobiana.elemento[2] = dF3(x);
+    va_start(valist, numF);
 
-    return Jacobiana;
+    for (int i = 0; i < numF; i++) {
+        double* (*F)(double[]) = va_arg(valist, double* (*));
+        funcao.elemento[i] = F(x);
+    }
+
+    va_end(valist);
+
+    return funcao;
 }

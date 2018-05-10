@@ -36,8 +36,8 @@ double* dF3(double* x) {
 
 int main() {
     double x[3] = {0.1, 0.1, -0.1};
-
-    matriz M = matrizJacobiana(x, &dF1, &dF2, &dF3);
+    printf("----1--------- %15.8lf -------------\n", dF1(x)[2]);
+    matriz M = matrizFuncao(3, x, 3, &dF1, &dF2, &dF3);
 
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++)
