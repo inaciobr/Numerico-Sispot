@@ -6,7 +6,7 @@
 
 #include "matriz.h"
 
-matriz matrizFuncao(int numX, double *x, int numF, ...);
-matriz newton();
+matriz matrizFuncao(int numX, double x[], int numF, ...);
+double* zeroNewton(int numX, double x[], int numF, ...);
 
 #endif // NUMERICO_H_INCLUDED

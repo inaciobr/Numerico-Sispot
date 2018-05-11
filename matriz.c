@@ -104,7 +104,7 @@ matriz decomposicaoLU(matriz A, int **permutacoes) {
     return LU;
 }
 
-matriz permutaLinhasMatriz(matriz A, int *P) {
+matriz permutaLinhasMatriz(matriz A, int P[]) {
     matriz M = copiaMatriz(A);
 
     for (int i = 0; i < M.numLinhas; i++) {

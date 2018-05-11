@@ -22,7 +22,7 @@ matriz transposta(matriz M);
 double det(matriz A);
 
 matriz decomposicaoLU(matriz A, int **permutacoes);
-matriz permutaLinhasMatriz(matriz A, int *P);
+matriz permutaLinhasMatriz(matriz A, int P[]);
 matriz matrizCofatores(matriz A, int n, int m);
 matriz cofatores(matriz M);
 
