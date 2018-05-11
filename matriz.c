@@ -21,14 +21,13 @@ void freeMatriz(matriz M) {
     free(M.elemento);
 }
 
-matriz multiplicaConstante(matriz M, double constante) {
-    matriz resultado = criaMatriz(M.numLinhas, M.numColunas);
+matriz multiplicaConstante(matriz A, double constante) {
 
-    for (int i = 0; i < M.numLinhas; i++)
-        for (int j = 0; j < M.numColunas; j++)
-            resultado.elemento[i][j] = constante * M.elemento[i][j];
+    for (int i = 0; i < A.numLinhas; i++)
+        for (int j = 0; j < A.numColunas; j++)
+            A.elemento[i][j] = constante * A.elemento[i][j];
 
-    return resultado;
+    return A;
 }
 
 double det(matriz A) {
@@ -47,11 +46,13 @@ double det(matriz A) {
 }
 
 matriz transposta(matriz M) {
-    matriz matrizT = criaMatriz(M.numLinhas, M.numColunas);
+    matriz matrizT = criaMatriz(M.numColunas, M.numLinhas);
 
     for (int i = 0; i < M.numLinhas; i++)
         for (int j = 0; j < M.numColunas; j++)
-                matrizT.elemento[i][j] = M.elemento[j][i];
+                matrizT.elemento[j][i] = M.elemento[i][j];
+
+    freeMatriz(M);
 
     return matrizT;
 }
@@ -105,47 +106,44 @@ matriz decomposicaoLU(matriz A, int **permutacoes) {
 }
 
 matriz permutaLinhasMatriz(matriz A, int P[]) {
-    matriz M = copiaMatriz(A);
-
-    for (int i = 0; i < M.numLinhas; i++) {
+    for (int i = 0; i < A.numLinhas; i++)
         if (i != P[i]) {
-            double *temp = M.elemento[i];
-            M.elemento[i] = M.elemento[P[i]];
-            M.elemento[P[i]] = temp;
+            double *temp = A.elemento[i];
+            A.elemento[i] = A.elemento[P[i]];
+            A.elemento[P[i]] = temp;
         }
-    }
 
-    return M;
+    return A;
 }
 
-matriz matrizCofatores(matriz M, int linha, int coluna) {
-    matriz MCofatores = criaMatriz(M.numLinhas - 1, M.numColunas - 1);
+double cofator(matriz M, int linha, int coluna) {
+    matriz mCofatores = criaMatriz(M.numLinhas - 1, M.numColunas - 1);
+    double resultado;
 
     for (int i = 0; i < M.numLinhas; i++)
         for (int j = 0; j < M.numColunas; j++)
             if (i != linha && j != coluna)
-                MCofatores.elemento[(i <= linha ? i : i - 1)][(j <= coluna ? j : j - 1)] = M.elemento[i][j];
+                mCofatores.elemento[(i <= linha ? i : i - 1)][(j <= coluna ? j : j - 1)] = M.elemento[i][j];
 
-    return MCofatores;
+    resultado = ((linha + coluna)%2 ? -1 : 1) * det(mCofatores);
+    freeMatriz(mCofatores);
+
+    return resultado;
 }
 
-matriz cofatores(matriz M) {
+matriz matrizCofatores(matriz M) {
     matriz cofatores = criaMatriz(M.numLinhas, M.numColunas);
 
-    for (int i = 0; i < M.numLinhas; i++) {
-        for (int j = 0; j < M.numColunas; j++) {
-            matriz cofij = matrizCofatores(M, i, j);
-            cofatores.elemento[i][j] = ((i + j)%2 ? -1 : 1) * det(cofij);
-            freeMatriz(cofij);
-        }
-    }
+    for (int i = 0; i < M.numLinhas; i++)
+        for (int j = 0; j < M.numColunas; j++)
+            cofatores.elemento[i][j] =  cofator(M, i, j);
 
     return cofatores;
 }
 
 matriz inversa(matriz M) {
-    matriz cof = cofatores(M);
-    matriz inversa = multiplicaConstante(transposta(cofatores(M)), 1/det(M));
+    matriz cof = matrizCofatores(M);
+    matriz inversa = multiplicaConstante(transposta(cof), 1/det(M));
     freeMatriz(cof);
 
     return inversa;

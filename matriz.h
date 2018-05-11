@@ -20,10 +20,10 @@ matriz inversa(matriz M);
 matriz transposta(matriz M);
 
 double det(matriz A);
+double cofator(matriz A, int n, int m);
 
 matriz decomposicaoLU(matriz A, int **permutacoes);
 matriz permutaLinhasMatriz(matriz A, int P[]);
-matriz matrizCofatores(matriz A, int n, int m);
 matriz cofatores(matriz M);
 
 #endif // MATRIZ_H_INCLUDED
