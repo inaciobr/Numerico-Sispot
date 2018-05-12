@@ -24,16 +24,9 @@ void freeMatriz(matriz *A) {
 }
 
 matriz multiplicaConstante(matriz A, double constante) {
-<<<<<<< HEAD
     for (int i = 0; i < A.numLinhas; i++)
         for (int j = 0; j < A.numColunas; j++)
             A.elemento[i][j] *= constante;
-=======
-
-    for (int i = 0; i < A.numLinhas; i++)
-        for (int j = 0; j < A.numColunas; j++)
-            A.elemento[i][j] = constante * A.elemento[i][j];
->>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
 
     return A;
 }
@@ -57,16 +50,6 @@ double det(matriz M) {
     return det * (N%2 ? -1 : 1);
 }
 
-<<<<<<< HEAD
-matriz transposta(matriz A) {
-    matriz matrizT = criaMatriz(A.numColunas, A.numLinhas);
-
-    for (int i = 0; i < A.numLinhas; i++)
-        for (int j = 0; j < A.numColunas; j++)
-                matrizT.elemento[j][i] = A.elemento[i][j];
-
-    freeMatriz(&A);
-=======
 matriz transposta(matriz M) {
     matriz matrizT = criaMatriz(M.numColunas, M.numLinhas);
 
@@ -74,8 +57,7 @@ matriz transposta(matriz M) {
         for (int j = 0; j < M.numColunas; j++)
                 matrizT.elemento[j][i] = M.elemento[i][j];
 
-    freeMatriz(M);
->>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
+    freeMatriz(&M);
 
     return matrizT;
 }
@@ -149,11 +131,8 @@ double cofator(matriz M, int linha, int coluna) {
                 mCofatores.elemento[(i <= linha ? i : i - 1)][(j <= coluna ? j : j - 1)] = M.elemento[i][j];
 
     resultado = ((linha + coluna)%2 ? -1 : 1) * det(mCofatores);
-<<<<<<< HEAD
+
     freeMatriz(&mCofatores);
-=======
-    freeMatriz(mCofatores);
->>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
 
     return resultado;
 }
@@ -163,28 +142,18 @@ matriz matrizCofatores(matriz M) {
 
     for (int i = 0; i < M.numLinhas; i++)
         for (int j = 0; j < M.numColunas; j++)
-<<<<<<< HEAD
             cofatores.elemento[i][j] = cofator(M, i, j);
-=======
-            cofatores.elemento[i][j] =  cofator(M, i, j);
->>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
 
     return cofatores;
 }
 
-<<<<<<< HEAD
 matriz inversa(matriz M) {
     if (M.numColunas != M.numLinhas)
         return M;
 
     matriz cof = matrizCofatores(M);
     matriz inversa = multiplicaConstante(transposta(cof), 1/det(M));
-=======
-matriz inversa(matriz M) {
-    matriz cof = matrizCofatores(M);
-    matriz inversa = multiplicaConstante(transposta(cof), 1/det(M));
-    freeMatriz(cof);
->>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
+    freeMatriz(&cof);
 
     return inversa;
 }
@@ -200,18 +169,8 @@ matriz produtoMatriz(matriz M1, matriz M2){
     return produto;
 }
 
-matriz somaMatriz(matriz A, matriz M){
-    if (A.numColunas != M.numColunas || A.numLinhas != M.numLinhas)
-        return A;
-
-    for (int i = 0; i < A.numLinhas ; i++)
-        for (int j = 0; j < A.numColunas ; j++)
-                    A.elemento[i][j] += M.elemento[i][j];
-
-    return A;
-}
-
 /// MUDAR PARA LU
+/// Talvez resultado em double (?)
 matriz resolveSistemaLinear(matriz A, matriz b) {
     matriz x = produtoMatriz(inversa(A), b);
 

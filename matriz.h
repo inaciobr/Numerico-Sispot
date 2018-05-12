@@ -16,7 +16,6 @@ void freeMatriz(matriz *M);
 
 matriz multiplicaConstante(matriz matriz, double constante);
 matriz produtoMatriz(matriz M, matriz v);
-matriz somaMatriz(matriz M1, matriz M2);
 matriz inversa(matriz M);
 matriz transposta(matriz M);
 

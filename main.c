@@ -47,39 +47,13 @@ double* dF3(double x[3]) {
 
 int main() {
     double x[3] = {0.1, 0.1, -0.1};
-<<<<<<< HEAD
     double* (*dF[3]) = {&dF1, &dF2, &dF3};
 
     zeroNewton(3, x, &Fx, 3, dF);
 
     for (int i = 0; i < 3; i++) {
         printf("%15.8f ", x[i]);
-=======
-    double* (*dF[3]) = {&dF1, &dF2, &dF3};
-    matriz MDF = matrizFuncao(3, x, 3, dF);
-    zeroNewton(3, x, &Fx, 3, dF);
-    //matriz F = transposta(matrizFuncao(3, x, 1, &Fx));
-
-    /*for (int i = 0; i < MDF.numLinhas; i++) {
-        for (int j = 0; j < MDF.numColunas; j++)
-            printf("%15.8lf ", MDF.elemento[i][j]);
-
-        printf("\n");
-    }*/
-
-    printf("\n\n\n");
-/*
-    for (int i = 0; i < F.numLinhas; i++) {
-        for (int j = 0; j < F.numColunas; j++)
-            printf("%15.8lf ", F.elemento[i][j]);
->>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
-
-        printf("\n");
     }
 
-    printf("\n\n\n");
-
-    //zeroNewton(3, x, &Fx, 3, &dF1, &dF2, &dF3);
-*/
     return 0;
 }
