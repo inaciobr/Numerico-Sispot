@@ -5,7 +5,7 @@ matriz criaMatriz(int numLinhas, int numColunas) {
     M.numLinhas = numLinhas;
     M.numColunas = numColunas;
 
-    M.elemento = malloc(numLinhas * sizeof(double *));
+    M.elemento = malloc(numLinhas * sizeof(double*));
 
     for (int i = 0; i < numLinhas; i++)
         M.elemento[i] = calloc(numColunas, sizeof(double));
@@ -13,38 +13,60 @@ matriz criaMatriz(int numLinhas, int numColunas) {
     return M;
 }
 
-void freeMatriz(matriz M) {
-    for (int i = 0; i < M.numLinhas; i++) {
-        free(M.elemento[i]);
-    }
+void freeMatriz(matriz *A) {
+    for (int i = 0; i < A->numLinhas; i++)
+        free(A->elemento[i]);
 
-    free(M.elemento);
+    free(A->elemento);
+
+    A->numLinhas = 0;
+    A->numColunas = 0;
 }
 
 matriz multiplicaConstante(matriz A, double constante) {
+<<<<<<< HEAD
+    for (int i = 0; i < A.numLinhas; i++)
+        for (int j = 0; j < A.numColunas; j++)
+            A.elemento[i][j] *= constante;
+=======
 
     for (int i = 0; i < A.numLinhas; i++)
         for (int j = 0; j < A.numColunas; j++)
             A.elemento[i][j] = constante * A.elemento[i][j];
+>>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
 
     return A;
 }
 
-double det(matriz A) {
+double det(matriz M) {
+    if (M.numColunas != M.numLinhas)
+        return 0;
+
     int *P;
-    matriz LU = decomposicaoLU(A, &P);
-    int N = P[A.numLinhas];
+    matriz LU = decomposicaoLU(M, &P);
+
+    int N = P[M.numLinhas];
+    free(P);
 
     double det = 1;
-    for (int i = 0; i < A.numLinhas; i++)
+    for (int i = 0; i < M.numLinhas; i++)
         det *= LU.elemento[i][i];
 
-    freeMatriz(LU);
-    free(P);
+    freeMatriz(&LU);
 
     return det * (N%2 ? -1 : 1);
 }
 
+<<<<<<< HEAD
+matriz transposta(matriz A) {
+    matriz matrizT = criaMatriz(A.numColunas, A.numLinhas);
+
+    for (int i = 0; i < A.numLinhas; i++)
+        for (int j = 0; j < A.numColunas; j++)
+                matrizT.elemento[j][i] = A.elemento[i][j];
+
+    freeMatriz(&A);
+=======
 matriz transposta(matriz M) {
     matriz matrizT = criaMatriz(M.numColunas, M.numLinhas);
 
@@ -53,6 +75,7 @@ matriz transposta(matriz M) {
                 matrizT.elemento[j][i] = M.elemento[i][j];
 
     freeMatriz(M);
+>>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
 
     return matrizT;
 }
@@ -67,15 +90,15 @@ matriz copiaMatriz(matriz M) {
     return copiaM;
 }
 
-matriz decomposicaoLU(matriz A, int **permutacoes) {
-    matriz LU = copiaMatriz(A);
-    int *P = malloc((A.numLinhas + 1) * sizeof(double));
-    P[A.numLinhas] = 0;
+matriz decomposicaoLU(matriz M, int **permutacoes) {
+    matriz LU = copiaMatriz(M);
+    int *P = malloc((M.numLinhas + 1) * sizeof(double));
+    P[M.numLinhas] = 0;
 
-    for (int k = 0; k < A.numLinhas; k++) {
+    for (int k = 0; k < M.numLinhas; k++) {
         double maxPivo = -1.0;
 
-        for (int i = k; i < A.numLinhas; i++) {
+        for (int i = k; i < M.numLinhas; i++) {
             for (int j = 0; j <= k - 1; j++)
                 LU.elemento[i][k] -= LU.elemento[i][j] * LU.elemento[j][k];
 
@@ -90,10 +113,10 @@ matriz decomposicaoLU(matriz A, int **permutacoes) {
             LU.elemento[k] = LU.elemento[P[k]];
             LU.elemento[P[k]] = temp;
 
-            P[A.numLinhas]++;
+            P[M.numLinhas]++;
         }
 
-        for (int j = k + 1; j < A.numLinhas; j++) {
+        for (int j = k + 1; j < M.numLinhas; j++) {
             for (int i = 0; i <= k - 1; i++)
                 LU.elemento[k][j] -= LU.elemento[k][i] * LU.elemento[i][j];
 
@@ -126,7 +149,11 @@ double cofator(matriz M, int linha, int coluna) {
                 mCofatores.elemento[(i <= linha ? i : i - 1)][(j <= coluna ? j : j - 1)] = M.elemento[i][j];
 
     resultado = ((linha + coluna)%2 ? -1 : 1) * det(mCofatores);
+<<<<<<< HEAD
+    freeMatriz(&mCofatores);
+=======
     freeMatriz(mCofatores);
+>>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
 
     return resultado;
 }
@@ -136,26 +163,66 @@ matriz matrizCofatores(matriz M) {
 
     for (int i = 0; i < M.numLinhas; i++)
         for (int j = 0; j < M.numColunas; j++)
+<<<<<<< HEAD
+            cofatores.elemento[i][j] = cofator(M, i, j);
+=======
             cofatores.elemento[i][j] =  cofator(M, i, j);
+>>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
 
     return cofatores;
 }
 
+<<<<<<< HEAD
+matriz inversa(matriz M) {
+    if (M.numColunas != M.numLinhas)
+        return M;
+
+    matriz cof = matrizCofatores(M);
+    matriz inversa = multiplicaConstante(transposta(cof), 1/det(M));
+=======
 matriz inversa(matriz M) {
     matriz cof = matrizCofatores(M);
     matriz inversa = multiplicaConstante(transposta(cof), 1/det(M));
     freeMatriz(cof);
+>>>>>>> 6199045bbb7a8032d11bea93262d1e5dbeb1b311
 
     return inversa;
 }
 
-matriz produtoMatriz(matriz A, matriz B){
-    matriz produto = criaMatriz(A.numLinhas, B.numColunas);
+matriz produtoMatriz(matriz M1, matriz M2){
+    matriz produto = criaMatriz(M1.numLinhas, M2.numColunas);
 
-    for (int i = 0; i < A.numLinhas ; i++)
-        for (int j = 0; j < B.numColunas ; j++)
-                for (int k = 0; k < A.numColunas; k++)
-                    produto.elemento[i][j] += A.elemento[i][k] * B.elemento[k][j];
+    for (int i = 0; i < M1.numLinhas; i++)
+        for (int j = 0; j < M2.numColunas; j++)
+                for (int k = 0; k < M1.numColunas; k++)
+                    produto.elemento[i][j] += M1.elemento[i][k] * M2.elemento[k][j];
 
     return produto;
+}
+
+matriz somaMatriz(matriz A, matriz M){
+    if (A.numColunas != M.numColunas || A.numLinhas != M.numLinhas)
+        return A;
+
+    for (int i = 0; i < A.numLinhas ; i++)
+        for (int j = 0; j < A.numColunas ; j++)
+                    A.elemento[i][j] += M.elemento[i][j];
+
+    return A;
+}
+
+/// MUDAR PARA LU
+matriz resolveSistemaLinear(matriz A, matriz b) {
+    matriz x = produtoMatriz(inversa(A), b);
+
+    return x;
+}
+
+void printMatriz(matriz M) {
+    for (int i = 0; i < M.numLinhas; i++) {
+        for (int j = 0; j < M.numColunas; j++)
+            printf("%15.8f ", M.elemento[i][j]);
+
+        printf("\n");
+    }
 }
