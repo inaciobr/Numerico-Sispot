@@ -5,7 +5,7 @@
 #include "matriz.h"
 #include "numerico.h"
 
-double *Fx(double x[3]) {
+double* Fx(double x[3]) {
     double *r = malloc(3 * sizeof(double));
 
     r[0] = 3*x[0] - cos(x[1]*x[2]) - 1/2.;
@@ -46,13 +46,11 @@ double* dF3(double x[3]) {
 }
 
 int main() {
-    double x[3] = {0.1, 0.1, -0.1};
-    double* (*dF[3]) = {&dF1, &dF2, &dF3};
+    for (int i = 0; i < 1000; i++) {
+        double x[3] = {0.1, 0.1, -0.1};
+        double* (*dF[3]) = {&dF1, &dF2, &dF3};
 
-    zeroNewton(3, x, &Fx, 3, dF);
-
-    for (int i = 0; i < 3; i++) {
-        printf("%15.8f ", x[i]);
+        zeroNewton(3, x, &Fx, 3, dF);
     }
 
     return 0;

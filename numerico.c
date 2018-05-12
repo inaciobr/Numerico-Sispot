@@ -1,34 +1,44 @@
 #include "numerico.h"
 
-matriz matrizFuncao(int numX, double x[], int numF, double* (*F[])(double[])) {
-    matriz funcao = criaMatriz(numF, numX);
+matriz matrizFuncao(matriz M, double x[], double* (*F)(double[])) {
     double *valores;
 
-    for (int i = 0; i < numF; i++) {
-        valores = F[i](x);
+    for (int i = 0; i < M.numColunas; i++) {
+        valores = F(x);
 
-        for (int j = 0; j < numX; j++)
-            funcao.elemento[i][j] = valores[j];
+        M.elemento[i][0] = valores[i];
     }
 
-    return funcao;
+    return M;
+}
+
+matriz jacobiana(matriz M, double x[], double* (*F[])(double[])) {
+    double *valores;
+
+    for (int i = 0; i < M.numLinhas; i++) {
+        valores = F[i](x);
+
+        for (int j = 0; j < M.numColunas; j++)
+            M.elemento[i][j] = valores[j];
+    }
+
+    return M;
 }
 
 void zeroNewton(int numX, double x[], double* (*F)(double[]), int numF, double *(*dF[])(double[])) {
-    matriz Fx, Jx, R;
+    matriz Jx = criaMatriz(numF, numX);
+    matriz Fx = criaMatriz(numX, 1);
 
     for (int k = 0; k < MAX_ITERACOES; k++) {
-        Fx = transposta(matrizFuncao(numX, x, 1, &F));
-        Jx = matrizFuncao(numX, x, numF, dF);
+        Fx = matrizFuncao(Fx, x, F);
+        Jx = jacobiana(Jx, x, dF);
 
-        R = resolveSistemaLinear(Jx, multiplicaConstante(Fx, -1));
+        matriz R = resolveSistemaLinear(Jx, multiplicaConstante(Fx, -1));
 
-
-        for (int i = 0; i < R.numLinhas; i++) {
+        for (int i = 0; i < R.numLinhas; i++)
                 x[i] += R.elemento[i][0];
-        }
-
-        freeMatriz(&Fx);
-        freeMatriz(&Jx);
     }
+
+    freeMatriz(&Jx);
+    freeMatriz(&Fx);
 }
