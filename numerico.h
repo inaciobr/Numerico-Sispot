@@ -10,8 +10,8 @@
 #define TOLERANCIA 1E-6
 
 
-matriz matrizFuncao(matriz M, double x[], double* (*F)(double[]));
-matriz jacobiana(matriz M, double x[], double* (*F[])(double[]));
-void zeroNewton(int numX, double x[], double* (*F)(double[]), int numF, double* (*dF[])(double[]));
+matriz matrizFuncao(matriz M, double x[], void (*F)(double[], double[]));
+matriz jacobiana(matriz M, double x[], void (*F[])(double[], double[]));
+void zeroNewton(int numX, double x[], void (*F)(double[], double[]), int numF, void (*dF[])(double[], double[]));
 
 #endif // NUMERICO_H_INCLUDED
