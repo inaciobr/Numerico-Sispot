@@ -5,7 +5,7 @@ matriz criaMatriz(int numLinhas, int numColunas) {
     M.numLinhas = numLinhas;
     M.numColunas = numColunas;
 
-    M.elemento = malloc(numLinhas * sizeof(double*));
+    M.elemento = malloc(numLinhas * sizeof(double *));
 
     for (int i = 0; i < numLinhas; i++)
         M.elemento[i] = calloc(numColunas, sizeof(double));
@@ -153,7 +153,6 @@ matriz inversa(matriz M) {
 
     matriz cof = matrizCofatores(M);
     matriz inversa = multiplicaConstante(transposta(cof), 1/det(M));
-    freeMatriz(&cof);
 
     return inversa;
 }
@@ -185,3 +184,4 @@ void printMatriz(matriz M) {
         printf("\n");
     }
 }
+

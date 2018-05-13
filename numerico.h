@@ -6,12 +6,14 @@
 #include "matriz.h"
 
 #define PI 3.14159265358979323846
-#define MAX_ITERACOES 10
+#define MAX_ITERACOES 20
 #define TOLERANCIA 1E-6
 
 
 matriz matrizFuncao(matriz M, double x[], void (*F)(double[], double[]));
 matriz jacobiana(matriz M, double x[], void (*F[])(double[], double[]));
 void zeroNewton(int numX, double x[], void (*F)(double[], double[]), int numF, void (*dF[])(double[], double[]));
+
+int tolerancia(matriz R, double x[]);
 
 #endif // NUMERICO_H_INCLUDED
