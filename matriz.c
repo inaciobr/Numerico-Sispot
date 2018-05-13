@@ -170,10 +170,52 @@ matriz produtoMatriz(matriz M1, matriz M2){
 
 /// MUDAR PARA LU
 /// Talvez resultado em double (?)
+/**
 matriz resolveSistemaLinear(matriz A, matriz b) {
     matriz x = produtoMatriz(inversa(A), b);
 
     return x;
+}
+**/
+
+matriz resolveSistemaLinear(matriz A, matriz b) {
+    /// Resolve sistema da forma Ax = b, em que A = L.U///
+    matriz P = criaMatriz(A.numLinhas,1);
+
+    double aux;
+    matriz LU = decomposicaoLU(A, &P);
+
+
+    /// Permutando b///
+    for(int i = 0; i < A.numLinhas;i++){
+        aux = b.elemento[i][0];
+        b.elemento[i][0] = b.elemento[(int)(P.elemento[i][0])][0];
+        b.elemento[(int)(P.elemento[i][0])][0] = aux;
+    }
+
+    /// Resolvendo Ly = b///
+    matriz y = criaMatriz(A.numLinhas,1);
+    for(int i = 0;i < A.numLinhas; i++){
+        double soma=0;
+
+        for(int p = 0; p < i; p++)
+            soma += LU.elemento[i][p] * y.elemento[p][0];
+
+        y.elemento[i][0]=(b.elemento[i][0]-soma);
+    }
+
+    /// Resolvendo Ux = y///
+    matriz x = criaMatriz(A.numLinhas,1);
+    for(int i = A.numLinhas -1; i >= 0; i--){
+        double soma = 0;
+
+        for(int p = 0; p < i; p++)
+            soma += LU.elemento[i][p] * x.elemento[p][0];
+
+        x.elemento[i][0]=(y.elemento[i][0]-soma)/LU.elemento[i][i];
+    }
+
+    return y;
 }
 
 void printMatriz(matriz M) {
