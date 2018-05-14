@@ -5,13 +5,11 @@
 #include <stdlib.h>
 
 typedef struct {
-    int posJ;
-    int posK;
-    double condutancia;
-    double susceptancia;
+    double **condutancia;
+    double **susceptancia;
 } node;
 
-int leituraNode(node** nodes, char arquivo[]);
+void leituraNode(node *nodes, int tamanhoMatriz, char arquivo[]);
 
 
 #endif // NODE_H_INCLUDED

@@ -13,7 +13,7 @@ enum tipoBarra {
 typedef struct {
     int id;
     int tipo;
-    double tensaoNominal;
+    double tensao;
     double anguloTensao;
     double potenciaAtiva;
     double potenciaReativa;
