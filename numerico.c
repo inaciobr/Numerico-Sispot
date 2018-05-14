@@ -39,7 +39,7 @@ void zeroNewton(int numX, double x[], void (*F)(double[], double[]), int numF, v
         R = resolveSistemaLinear(Jx, multiplicaConstante(Fx, -1));
 
         for (int i = 0; i < R.numLinhas; i++)
-                x[i] += R.elemento[i][0];
+            x[i] += R.elemento[i][0];
 
         if (tolerancia(R, x)) {
             freeMatriz(&R);

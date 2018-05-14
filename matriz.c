@@ -74,18 +74,20 @@ matriz copiaMatriz(matriz M) {
 
 matriz decomposicaoLU(matriz M, int **permutacoes) {
     matriz LU = copiaMatriz(M);
-    int *P = malloc((M.numLinhas + 1) * sizeof(double));
-    P[M.numLinhas] = 0;
+    int *P = calloc((M.numLinhas + 1), sizeof(double));
 
     for (int k = 0; k < M.numLinhas; k++) {
         double maxPivo = -1.0;
+        double abs = 0.0;
 
         for (int i = k; i < M.numLinhas; i++) {
-            for (int j = 0; j <= k - 1; j++)
+            for (int j = 0; j < k; j++)
                 LU.elemento[i][k] -= LU.elemento[i][j] * LU.elemento[j][k];
 
-            if (abs(LU.elemento[i][k]) > maxPivo) {
-                maxPivo = LU.elemento[i][k];
+            abs = LU.elemento[i][k] > 0 ? LU.elemento[i][k] : -LU.elemento[i][k];
+
+            if (abs > maxPivo) {
+                maxPivo = abs;
                 P[k] = i;
             }
         }
@@ -99,7 +101,7 @@ matriz decomposicaoLU(matriz M, int **permutacoes) {
         }
 
         for (int j = k + 1; j < M.numLinhas; j++) {
-            for (int i = 0; i <= k - 1; i++)
+            for (int i = 0; i < k; i++)
                 LU.elemento[k][j] -= LU.elemento[k][i] * LU.elemento[i][j];
 
             LU.elemento[j][k] /= LU.elemento[k][k];
@@ -168,54 +170,42 @@ matriz produtoMatriz(matriz M1, matriz M2){
     return produto;
 }
 
-/// MUDAR PARA LU
-/// Talvez resultado em double (?)
-/**
+/// Resolve sistema da forma Ax = b, em que A = L.U///
 matriz resolveSistemaLinear(matriz A, matriz b) {
-    matriz x = produtoMatriz(inversa(A), b);
-
-    return x;
-}
-**/
-
-matriz resolveSistemaLinear(matriz A, matriz b) {
-    /// Resolve sistema da forma Ax = b, em que A = L.U///
-    matriz P = criaMatriz(A.numLinhas,1);
-
-    double aux;
+    int *P;
     matriz LU = decomposicaoLU(A, &P);
 
+    /// Permutando b///z
+    permutaLinhasMatriz(b, P);
 
-    /// Permutando b///
-    for(int i = 0; i < A.numLinhas;i++){
-        aux = b.elemento[i][0];
-        b.elemento[i][0] = b.elemento[(int)(P.elemento[i][0])][0];
-        b.elemento[(int)(P.elemento[i][0])][0] = aux;
-    }
+    free(P);
 
     /// Resolvendo Ly = b///
-    matriz y = criaMatriz(A.numLinhas,1);
-    for(int i = 0;i < A.numLinhas; i++){
-        double soma=0;
+    matriz y = criaMatriz(A.numLinhas, 1);    /// Resolve sistema da forma Ax = b, em que A = L.U///
+    for (int i = 0; i < A.numLinhas; i++) {
+        double soma = 0.0;
 
-        for(int p = 0; p < i; p++)
-            soma += LU.elemento[i][p] * y.elemento[p][0];
+        for (int j = 0; j < i; j++)
+            soma += LU.elemento[i][j] * y.elemento[j][0];
 
-        y.elemento[i][0]=(b.elemento[i][0]-soma);
+        y.elemento[i][0] = (b.elemento[i][0] - soma);
     }
 
     /// Resolvendo Ux = y///
-    matriz x = criaMatriz(A.numLinhas,1);
-    for(int i = A.numLinhas -1; i >= 0; i--){
+    matriz x = criaMatriz(A.numLinhas, 1);
+    for (int i = A.numLinhas -1; i >= 0; i--) {
         double soma = 0;
 
-        for(int p = 0; p < i; p++)
-            soma += LU.elemento[i][p] * x.elemento[p][0];
+        for (int j = 0; j < i; j++)
+            soma += LU.elemento[i][j] * x.elemento[j][0];
 
-        x.elemento[i][0]=(y.elemento[i][0]-soma)/LU.elemento[i][i];
+        x.elemento[i][0] = (y.elemento[i][0] - soma) / LU.elemento[i][i];
     }
 
-    return y;
+    freeMatriz(&LU);
+    freeMatriz(&y);
+
+    return x;
 }
 
 void printMatriz(matriz M) {
