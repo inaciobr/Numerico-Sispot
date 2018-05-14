@@ -21,5 +21,4 @@ typedef struct {
 
 int leituraBarra(barra** barras, char arquivo[]) ;
 
-
 #endif // BARRA_H_INCLUDED

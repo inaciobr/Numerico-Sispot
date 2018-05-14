@@ -41,5 +41,3 @@ int leituraBarra(barra **barras, char arquivo[]) {
     *barras = barrasArquivo;
     return N;
 }
-
-// freeBarras

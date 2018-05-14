@@ -42,10 +42,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="matriz.h" />
-		<Unit filename="node.c">
+		<Unit filename="nodal.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="node.h" />
+		<Unit filename="nodal.h" />
 		<Unit filename="numerico.c">
 			<Option compilerVar="CC" />
 		</Unit>
