@@ -166,123 +166,143 @@ void funcaoDesvio(double x[], double resultado[], rede r) {
     fQ(&resultado[r.numPQ + r.numPV], r);
 }
 
-matriz jacobianaDesvios(/*double x[], double res[], */rede r) {
-    //double *theta = x;
-    //double *tensao = &x[r.numPQ + r.numPV];
+//double *theta = x;
+//double *tensao = &x[r.numPQ + r.numPV];
+matriz jacobianaDesvios(rede r) {
     matriz M = criaMatriz(2*r.numPQ + r.numPV, 2*r.numPQ + r.numPV);
-
-    //del FP / del THETA => (r.numPQ + r.numPV) x (r.numPQ + r.numPV)
-
-    int k,j = 0;
     double angulo;
 
-     for (int l = 0; l < r.numBarras; l++) {
-        if (r.barras[l].tipo == B_SWING)
+    //del FP / del THETA => (r.numPQ + r.numPV) x (r.numPQ + r.numPV)
+    int jMatriz = 0, iFP = 0;
+    for (int j = 0; j < r.numBarras; j++) {
+        if (r.barras[j].tipo == B_SWING)
             continue;
 
-        k = 0;
-        for (int i = 0; i < r.numBarras; i++) {
-            if (r.barras[i].tipo == B_SWING)
+        jMatriz = 0;
+        for (int k = 0; k < r.numBarras; k++) {
+            if (r.barras[k].tipo == B_SWING)
                 continue;
 
-            if (j == k) {
-                angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] +=r.barras[j].tensao*r.barras[i].tensao*(r.mNodal.condutancia.elemento[j][i]*sin(angulo)+r.mNodal.susceptancia.elemento[j][i]*cos(angulo));
-            } else {
-                angulo =r.barras[k].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] = -r.barras[j].tensao * r.barras[k].tensao*(r.mNodal.condutancia.elemento[j][k]*sin(angulo)+r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
-            }
+            if (iFP == jMatriz) {
+                M.elemento[iFP][jMatriz] = 0.0;
 
-            k++;
-        }
+                for (int i = 0; i < r.numBarras; i++) {
+                    angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
+                    M.elemento[iFP][jMatriz] += r.barras[i].tensao
+                                                * (r.mNodal.condutancia.elemento[i][j]*sin(angulo)
+                                                    + r.mNodal.susceptancia.elemento[i][j]*cos(angulo));
+                }
 
-        j++;
-    }
-
-
-    //del FP / del V => (r.numPQ + r.numPV) x (r.numPQ)
-    //j deve zerar
-
-    int kPV = k;//ultimo valor da matriz dfp/dO + 1 na coluna
-    int jQ = j;// ultimo valor da matriz dfp/dO + 1 na linha
-    j = 0;
-
-     for (int l = 0; l < r.numBarras; l++) {
-        if (r.barras[l].tipo != B_PQ)
-            continue;
-
-        k = kPV;
-        for (int i = 0; i < r.numBarras; i++) {
-            if (r.barras[i].tipo != B_PQ)
-                continue;
-
-            if (j == k) {
-                angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] += r.barras[j].tensao * r.barras[i].tensao*(r.mNodal.condutancia.elemento[j][i]*cos(angulo)-r.mNodal.susceptancia.elemento[j][i]*sin(angulo));
+                M.elemento[iFP][jMatriz] *= r.barras[j].tensao;
             } else {
                 angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] = r.barras[j].tensao*(r.mNodal.condutancia.elemento[j][k]*cos(angulo)-r.mNodal.susceptancia.elemento[j][k]*sin(angulo));
+                M.elemento[iFP][jMatriz] = -r.barras[j].tensao * r.barras[k].tensao
+                                            * (r.mNodal.condutancia.elemento[j][k]*sin(angulo)
+                                                + r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
             }
 
-            k++;
+            jMatriz++;
         }
 
-        j++;
+        iFP++;
+    }
+
+    //del FP / del V => (r.numPQ + r.numPV) x (r.numPQ)
+    iFP = 0;
+    for (int j = 0; j < r.numBarras; j++) {
+        if (r.barras[j].tipo == B_SWING)
+            continue;
+
+        jMatriz = 0;
+        for (int k = 0; k < r.numBarras; k++) {
+            if (r.barras[k].tipo != B_PQ)
+                continue;
+
+            if (iFP == jMatriz) {
+                M.elemento[iFP][r.numPQ + r.numPV + jMatriz] = 0.0;
+
+                for (int i = 0; i < r.numBarras; i++) {
+                    angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
+                    M.elemento[iFP][r.numPQ + r.numPV + jMatriz] += r.barras[i].tensao * (r.mNodal.condutancia.elemento[j][i]*cos(angulo) - r.mNodal.susceptancia.elemento[j][i]*sin(angulo));
+                }
+            } else {
+                angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
+                M.elemento[iFP][r.numPQ + r.numPV + jMatriz] = r.barras[j].tensao * (r.mNodal.condutancia.elemento[j][k]*cos(angulo) - r.mNodal.susceptancia.elemento[j][k]*sin(angulo));
+            }
+
+            jMatriz++;
+        }
+
+        iFP++;
     }
 
 
     //del FQ / del THETA => (r.numPQ) x (r.numPQ + r.numPV)
-    j = jQ;
-    k =0;
-    for (int l = 0; l < r.numBarras; l++) {
-        if (r.barras[l].tipo != B_PQ)
+    iFP = 0;
+    for (int j = 0; j < r.numBarras; j++) {
+        if (r.barras[j].tipo != B_PQ)
             continue;
 
-        k = 0;
-        for (int i = 0; i < r.numBarras; i++) {
-            if (r.barras[i].tipo != B_PQ) //mudei de swing pra pq
+        jMatriz = 0;
+        for (int k = 0; k < r.numBarras; k++) {
+            if (r.barras[k].tipo == B_SWING)
                 continue;
 
-            if (j == k) {
-                angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] +=r.barras[j].tensao*r.barras[i].tensao*(r.mNodal.condutancia.elemento[j][i]*cos(angulo)-r.mNodal.susceptancia.elemento[j][i]*sin(angulo));
+            if (iFP == jMatriz) {
+                M.elemento[r.numPQ + r.numPV + iFP][jMatriz] = 0.0;
+
+                for (int i = 0; i < r.numBarras; i++) {
+                    angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
+                    M.elemento[r.numPQ + r.numPV + iFP][jMatriz] += r.barras[i].tensao*(r.mNodal.condutancia.elemento[j][i]*cos(angulo) - r.mNodal.susceptancia.elemento[j][i]*sin(angulo));
+                }
+
+                M.elemento[r.numPQ + r.numPV + iFP][jMatriz] *= r.barras[j].tensao;
             } else {
                 angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] = -r.barras[j].tensao * r.barras[k].tensao;//*(r.mNodal.condutancia.elemento[j][k]*sin(angulo)+r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
-            }//PROBLEMA//////////\//\/\\\/\//\/\/\
+                M.elemento[r.numPQ + r.numPV + iFP][jMatriz] = -r.barras[j].tensao * r.barras[k].tensao
+                                                            * (r.mNodal.condutancia.elemento[j][k]*cos(angulo)
+                                                                - r.mNodal.susceptancia.elemento[j][k]*sin(angulo));
+            }
 
-            k++;
+            jMatriz++;
         }
 
-        j++;
+        iFP++;
     }
 
 
     //del FQ / del V => (r.numPQ) x (r.numPQ)
-    j = jQ;
-     for (int l = 0; l < r.numBarras; l++) {
-        if (r.barras[l].tipo != B_PQ)
+    iFP = 0;
+    for (int j = 0; j < r.numBarras; j++) {
+        if (r.barras[j].tipo != B_PQ)
             continue;
 
-        k = kPV;
-        for (int i = 0; i < r.numBarras; i++) {
-            if (r.barras[i].tipo != B_PQ)
+        jMatriz = 0;
+        for (int k = 0; k < r.numBarras; k++) {
+            if (r.barras[k].tipo != B_PQ)
                 continue;
 
-            if (j == k) {
-                angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] += r.barras[j].tensao * r.barras[i].tensao ;//* (r.mNodal.condutancia.elemento[j][i]*sin(angulo)+r.mNodal.susceptancia.elemento[j][i]*cos(angulo));
-            } else { //PROBLEMAAAAAAAA
-                angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] = -r.barras[j].tensao;//*(r.mNodal.condutancia.elemento[j][k]*sin(angulo)+r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
-            }//PROBLEMAAAAA
+            if (iFP == jMatriz) {
+                M.elemento[r.numPQ + r.numPV + iFP][jMatriz] = 0.0;
 
-            k++;
+                for (int i = 0; i < r.numBarras; i++) {
+                    angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
+                    M.elemento[r.numPQ + r.numPV + iFP][r.numPQ + r.numPV + jMatriz] += r.barras[i].tensao
+                                                                                    * (r.mNodal.condutancia.elemento[j][i]*sin(angulo)
+                                                                                        + r.mNodal.susceptancia.elemento[j][i]*cos(angulo));
+                }
+            } else {
+                angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
+                M.elemento[r.numPQ + r.numPV + iFP][r.numPQ + r.numPV + jMatriz] = -r.barras[j].tensao
+                                                                                * (r.mNodal.condutancia.elemento[j][k]*sin(angulo)
+                                                                                    + r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
+            }
+
+            jMatriz++;
         }
 
-        j++;
+        iFP++;
     }
-
 
     return M;
 
