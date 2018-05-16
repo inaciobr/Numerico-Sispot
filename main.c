@@ -7,17 +7,45 @@
 int main() {
     rede redePotencia;
     redePotencia = leituraRede("1_Stevenson");
-    matriz J = jacobianaDesvios(redePotencia);
-    //double res[2*redePotencia.numPQ + redePotencia.numPV];
 
-    // De 0 a redePotencia.numPQ + redePotencia.numPV => theta, após => tensão
-    //double *x = calloc(2*redePotencia.numPQ + redePotencia.numPV, sizeof(double));
+    double *x = calloc(2*redePotencia.numPQ + redePotencia.numPV, sizeof(double));
 
-    //funcaoDesvio(x, res, redePotencia);
-    //matriz M = jacobianaDesvios(x, res, redePotencia);
+    int jMatriz = 0;
+    for (int k = 0; k < redePotencia.numBarras; k++) {
+        if (redePotencia.barras[k].tipo != B_PQ)
+            continue;
 
-    //for (int i = 0; i < 2*redePotencia.numPQ + redePotencia.numPV; i++)
-      //  printf("%f ", res[i]);
-    printMatriz(J);
+        x[redePotencia.numPQ + redePotencia.numPV + jMatriz] = redePotencia.barras[k].tensao;
+        x[jMatriz] = redePotencia.barras[k].anguloTensao;
+
+        jMatriz++;
+    }
+
+    jMatriz = 0;
+    for (int k = 0; k < redePotencia.numBarras; k++) {
+        if (redePotencia.barras[k].tipo != B_PV)
+            continue;
+
+        x[redePotencia.numPQ + jMatriz] = redePotencia.barras[k].tensao;
+
+        jMatriz++;
+    }
+
+
+    matriz R;
+    for (int k = 0; k < MAX_ITERACOES; k++) {
+        matriz Fx = funcaoDesvio(x, redePotencia);
+        matriz Jx = jacobianaDesvios(redePotencia);
+
+        R = resolveSistemaLinear(Jx, Fx);
+
+        for (int i = 0; i < R.numLinhas; i++)
+            x[i] += R.elemento[i][0];
+    }
+
+    for (int k = 0; k < 2*redePotencia.numPQ + redePotencia.numPV; k++) {
+        printf("%f\n", x[k]);
+    }
+
     return 0;
 }

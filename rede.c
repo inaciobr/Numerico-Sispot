@@ -111,14 +111,16 @@ void fP(double resultado[], rede r) {
         if (r.barras[i].tipo == B_SWING)
             continue;
 
-        resultado[j] = r.barras[i].tensao;
+        resultado[j] = 0;
 
         for (int k = 0; k < r.numBarras; k++) {
             double angulo = r.barras[k].anguloTensao - r.barras[i].anguloTensao;
 
-            resultado[j] *= r.barras[k].tensao;
-            resultado[j] *= r.mNodal.condutancia.elemento[i][k]*cos(angulo) - r.mNodal.susceptancia.elemento[i][k]*sin(angulo);
+            resultado[j] += r.barras[k].tensao * (r.mNodal.condutancia.elemento[i][k]*cos(angulo)
+                                                  - r.mNodal.susceptancia.elemento[i][k]*sin(angulo));
         }
+
+        resultado[j] *= r.barras[i].tensao;
 
         if (r.barras[i].tipo == B_PV)
             resultado[j] -= r.barras[i].potenciaAtiva;
@@ -133,20 +135,23 @@ void fQ(double resultado[], rede r) {
         if (r.barras[i].tipo != B_PQ)
             continue;
 
-        resultado[j] = -r.barras[i].tensao;
-
+        resultado[j] = 0.0;
         for (int k = 0; k < r.numBarras; k++) {
             double angulo = r.barras[k].anguloTensao - r.barras[i].anguloTensao;
 
-            resultado[j] *= r.barras[k].tensao;
-            resultado[j] *= r.mNodal.condutancia.elemento[i][k] * sin(angulo) + r.mNodal.susceptancia.elemento[i][k] * cos(angulo);
+            resultado[j] += r.barras[k].tensao * ( r.mNodal.condutancia.elemento[i][k] * sin(angulo)
+                                                  + r.mNodal.susceptancia.elemento[i][k] * cos(angulo));
         }
+
+        resultado[j] *= -r.barras[i].tensao;
 
         j++;
     }
 }
 
-void funcaoDesvio(double x[], double resultado[], rede r) {
+matriz funcaoDesvio(double x[], rede r) {
+    matriz M = criaMatriz(2*r.numPQ + r.numPV, 1);
+
     double *theta = x;
     double *tensao = &x[r.numPQ + r.numPV];
 
@@ -162,9 +167,17 @@ void funcaoDesvio(double x[], double resultado[], rede r) {
         }
     }
 
+    double resultado[2*r.numPQ + r.numPV];
+
     fP(resultado, r);
     fQ(&resultado[r.numPQ + r.numPV], r);
+
+    for (int i = 0; i < 2*r.numPQ + r.numPV; i++)
+        M.elemento[i][0] = -resultado[i];
+
+    return M;
 }
+
 
 //double *theta = x;
 //double *tensao = &x[r.numPQ + r.numPV];
@@ -307,4 +320,3 @@ matriz jacobianaDesvios(rede r) {
     return M;
 
 }
-

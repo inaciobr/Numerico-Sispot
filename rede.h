@@ -49,7 +49,7 @@ void leituraNodal(rede *r, char arquivo[]);
 
 void freeNodal(nodal *mNodal);
 
-void funcaoDesvio(double x[], double res[], rede r);
+matriz funcaoDesvio(double x[], rede r);
 matriz jacobianaDesvios(rede r);
 
 void fP(double resultado[], rede r);
