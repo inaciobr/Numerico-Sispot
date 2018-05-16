@@ -166,9 +166,9 @@ void funcaoDesvio(double x[], double resultado[], rede r) {
     fQ(&resultado[r.numPQ + r.numPV], r);
 }
 
-matriz jacobianaDesvios(double x[], double res[], rede r) {
+matriz jacobianaDesvios(/*double x[], double res[], */rede r) {
     //double *theta = x;
-    double *tensao = &x[r.numPQ + r.numPV];
+    //double *tensao = &x[r.numPQ + r.numPV];
     matriz M = criaMatriz(2*r.numPQ + r.numPV, 2*r.numPQ + r.numPV);
 
     //del FP / del THETA => (r.numPQ + r.numPV) x (r.numPQ + r.numPV)
@@ -189,7 +189,7 @@ matriz jacobianaDesvios(double x[], double res[], rede r) {
                 angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
                 M.elemento[j][k] +=r.barras[j].tensao*r.barras[i].tensao*(r.mNodal.condutancia.elemento[j][i]*sin(angulo)+r.mNodal.susceptancia.elemento[j][i]*cos(angulo));
             } else {
-                angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
+                angulo =r.barras[k].anguloTensao - r.barras[j].anguloTensao;
                 M.elemento[j][k] = -r.barras[j].tensao * r.barras[k].tensao*(r.mNodal.condutancia.elemento[j][k]*sin(angulo)+r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
             }
 
@@ -198,6 +198,8 @@ matriz jacobianaDesvios(double x[], double res[], rede r) {
 
         j++;
     }
+
+
     //del FP / del V => (r.numPQ + r.numPV) x (r.numPQ)
     //j deve zerar
 
@@ -233,12 +235,12 @@ matriz jacobianaDesvios(double x[], double res[], rede r) {
     j = jQ;
     k =0;
     for (int l = 0; l < r.numBarras; l++) {
-        if (r.barras[l].tipo == B_SWING)
+        if (r.barras[l].tipo != B_PQ)
             continue;
 
         k = 0;
         for (int i = 0; i < r.numBarras; i++) {
-            if (r.barras[i].tipo == B_SWING)
+            if (r.barras[i].tipo != B_PQ) //mudei de swing pra pq
                 continue;
 
             if (j == k) {
@@ -246,14 +248,15 @@ matriz jacobianaDesvios(double x[], double res[], rede r) {
                 M.elemento[j][k] +=r.barras[j].tensao*r.barras[i].tensao*(r.mNodal.condutancia.elemento[j][i]*cos(angulo)-r.mNodal.susceptancia.elemento[j][i]*sin(angulo));
             } else {
                 angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] = -r.barras[j].tensao * r.barras[k].tensao*(r.mNodal.condutancia.elemento[j][k]*sin(angulo)+r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
-            }
+                M.elemento[j][k] = -r.barras[j].tensao * r.barras[k].tensao;//*(r.mNodal.condutancia.elemento[j][k]*sin(angulo)+r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
+            }//PROBLEMA//////////\//\/\\\/\//\/\/\
 
             k++;
         }
 
         j++;
     }
+
 
     //del FQ / del V => (r.numPQ) x (r.numPQ)
     j = jQ;
@@ -268,17 +271,18 @@ matriz jacobianaDesvios(double x[], double res[], rede r) {
 
             if (j == k) {
                 angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] += r.barras[j].tensao * r.barras[i].tensao * (r.mNodal.condutancia.elemento[j][i]*sin(angulo)+r.mNodal.susceptancia.elemento[j][i]*cos(angulo));
-            } else {
+                M.elemento[j][k] += r.barras[j].tensao * r.barras[i].tensao ;//* (r.mNodal.condutancia.elemento[j][i]*sin(angulo)+r.mNodal.susceptancia.elemento[j][i]*cos(angulo));
+            } else { //PROBLEMAAAAAAAA
                 angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
-                M.elemento[j][k] = -r.barras[j].tensao*(r.mNodal.condutancia.elemento[j][k]*sin(angulo)+r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
-            }
+                M.elemento[j][k] = -r.barras[j].tensao;//*(r.mNodal.condutancia.elemento[j][k]*sin(angulo)+r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
+            }//PROBLEMAAAAA
 
             k++;
         }
 
         j++;
     }
+
 
     return M;
 

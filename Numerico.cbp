@@ -31,10 +31,6 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="barra.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="barra.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -42,14 +38,14 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="matriz.h" />
-		<Unit filename="nodal.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="nodal.h" />
 		<Unit filename="numerico.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="numerico.h" />
+		<Unit filename="rede.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rede.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
