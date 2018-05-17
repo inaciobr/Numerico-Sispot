@@ -108,19 +108,22 @@ void freeNodal(nodal *mNodal) {
 
 void fP(double resultado[], rede r) {
     int iFP = 0;
+    double angulo;
+
     for (int j = 0; j < r.numBarras; j++) {
         if (r.barras[j].tipo == B_SWING)
             continue;
 
-        resultado[iFP] = 0.0;
+        resultado[iFP] = r.barras[j].tensao * r.barras[j].tensao * r.mNodal.condutancia.elemento[j][j];
         for (int k = 0; k < r.numBarras; k++) {
-            double angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
+            if (k == j)
+                continue;
 
-            resultado[iFP] += r.barras[k].tensao * (r.mNodal.condutancia.elemento[j][k]*cos(angulo)
-                                                  - r.mNodal.susceptancia.elemento[j][k]*sin(angulo));
+            angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
+
+            resultado[iFP] += r.barras[j].tensao * r.barras[k].tensao * (r.mNodal.condutancia.elemento[j][k]*cos(angulo)
+                                                                         - r.mNodal.susceptancia.elemento[j][k]*sin(angulo));
         }
-
-        resultado[iFP] *= r.barras[j].tensao;
 
         if (r.barras[j].tipo == B_PV)
             resultado[iFP] -= r.barras[j].potenciaAtiva;
@@ -131,19 +134,21 @@ void fP(double resultado[], rede r) {
 
 void fQ(double resultado[], rede r) {
     int iFP = 0;
+    double angulo;
+
     for (int j = 0; j < r.numBarras; j++) {
         if (r.barras[j].tipo != B_PQ)
             continue;
 
-        resultado[iFP] = 0.0;
+        resultado[iFP] = -r.barras[j].tensao * r.barras[j].tensao * r.mNodal.susceptancia.elemento[j][j];
         for (int k = 0; k < r.numBarras; k++) {
-            double angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
+            if (k == j)
+                continue;
 
-            resultado[iFP] += r.barras[k].tensao * (r.mNodal.condutancia.elemento[j][k]*cos(angulo)
-                                                  - r.mNodal.susceptancia.elemento[j][k]*sin(angulo));
+            angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
+            resultado[iFP] -= r.barras[j].tensao * r.barras[k].tensao * (r.mNodal.condutancia.elemento[j][k]*sin(angulo)
+                                                                         + r.mNodal.susceptancia.elemento[j][k]*cos(angulo));
         }
-
-        resultado[iFP] *= r.barras[j].tensao;
 
         iFP++;
     }

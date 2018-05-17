@@ -10,28 +10,22 @@ int main() {
 
     double *x = calloc(2*redePotencia.numPQ + redePotencia.numPV, sizeof(double));
 
-    int jMatriz = 0;
+    int jMatriz = 0, jPQ = 0;
     for (int k = 0; k < redePotencia.numBarras; k++) {
-        if (redePotencia.barras[k].tipo != B_PQ)
+        if (redePotencia.barras[k].tipo == B_SWING)
             continue;
 
-        x[redePotencia.numPQ + redePotencia.numPV + jMatriz] = redePotencia.barras[k].tensao;
         x[jMatriz] = redePotencia.barras[k].anguloTensao;
 
-        jMatriz++;
-    }
-
-    jMatriz = 0;
-    for (int k = 0; k < redePotencia.numBarras; k++) {
-        if (redePotencia.barras[k].tipo != B_PV)
-            continue;
-
-        x[redePotencia.numPQ + jMatriz] = redePotencia.barras[k].anguloTensao;
+        if (redePotencia.barras[k].tipo == B_PQ) {
+            x[redePotencia.numPQ + redePotencia.numPV + jPQ] = redePotencia.barras[k].tensao;
+            jPQ++;
+        }
 
         jMatriz++;
     }
 
-    for (int k = 0; k < 1; k++) {
+    for (int k = 0; k < 5; k++) {
         matriz Fx = funcaoDesvio(x, redePotencia);
         matriz Jx = jacobianaDesvios(redePotencia);
 
@@ -41,10 +35,9 @@ int main() {
             x[i] += R.elemento[i][0];
     }
 
-    for (int k = 0; k < 2*redePotencia.numPQ + redePotencia.numPV; k++) {
-        printf("%f\n", x[k]);
+    for (int k = 0; k < redePotencia.numBarras; k++) {
+        printf("%d: %2.5f\n", redePotencia.barras[k].id, redePotencia.barras[k].tensao/redePotencia.barras[k].tensaoNominal);
     }
-
 
     //testesZeroNewton();
 
