@@ -67,6 +67,9 @@ int tolerancia(matriz R, double x[]) {
     return 0;
 }
 
+double rad2Graus(double angulo) {
+    return angulo * 180 / PI;
+}
 
 // TESTES INICIAIS
 void F1x(double x[2], double r[2]) {

@@ -15,6 +15,7 @@ matriz jacobiana(matriz M, double x[], void (*F[])(double[], double[]));
 void zeroNewton(int numX, double x[], void (*F)(double[], double[]), int numF, void (*dF[])(double[], double[]));
 
 int tolerancia(matriz R, double x[]);
+double rad2Graus(double angulo);
 
 void testesZeroNewton();
 

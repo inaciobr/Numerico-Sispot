@@ -6,6 +6,7 @@
 #include <math.h>
 
 #include "matriz.h"
+#include "numerico.h"
 
 typedef struct {
     matriz condutancia;
@@ -49,10 +50,14 @@ void leituraNodal(rede *r, char arquivo[]);
 
 void freeNodal(nodal *mNodal);
 
-matriz funcaoDesvio(double x[], rede r);
-matriz jacobianaDesvios(rede r);
+void fluxoDePotenciaNewton(rede r);
+
+matriz funcaoDesvio(matriz M, rede r);
+matriz jacobianaDesvios(matriz M, rede r);
 
 void fP(double resultado[], rede r);
 void fQ(double resultado[], rede r);
+
+void atualizaRede(double x[], rede r);
 
 #endif // REDE_H_INCLUDED

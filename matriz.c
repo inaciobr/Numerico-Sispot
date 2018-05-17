@@ -112,15 +112,13 @@ matriz decomposicaoLU(matriz M, int **permutacoes) {
     return LU;
 }
 
-matriz permutaLinhasMatriz(matriz A, int P[]) {
+void permutaLinhasMatriz(matriz A, int P[]) {
     for (int i = 0; i < A.numLinhas; i++)
         if (i != P[i]) {
             double *temp = A.elemento[i];
             A.elemento[i] = A.elemento[P[i]];
             A.elemento[P[i]] = temp;
         }
-
-    return A;
 }
 
 double cofator(matriz M, int linha, int coluna) {

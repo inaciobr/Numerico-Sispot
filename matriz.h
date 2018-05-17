@@ -24,9 +24,9 @@ double cofator(matriz A, int n, int m);
 
 matriz decomposicaoLU(matriz A, int **permutacoes);
 matriz resolveSistemaLinear(matriz A, matriz b);
-matriz permutaLinhasMatriz(matriz A, int P[]);
 matriz cofatores(matriz M);
 
+void permutaLinhasMatriz(matriz A, int P[]);
 void printMatriz(matriz M);
 
 #endif // MATRIZ_H_INCLUDED

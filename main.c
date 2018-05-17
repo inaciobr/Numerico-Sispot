@@ -6,38 +6,14 @@
 
 int main() {
     rede redePotencia;
-    redePotencia = leituraRede("1_Stevenson");
-
-    double *x = calloc(2*redePotencia.numPQ + redePotencia.numPV, sizeof(double));
-
-    int jMatriz = 0, jPQ = 0;
-    for (int k = 0; k < redePotencia.numBarras; k++) {
-        if (redePotencia.barras[k].tipo == B_SWING)
-            continue;
-
-        x[jMatriz] = redePotencia.barras[k].anguloTensao;
-
-        if (redePotencia.barras[k].tipo == B_PQ) {
-            x[redePotencia.numPQ + redePotencia.numPV + jPQ] = redePotencia.barras[k].tensao;
-            jPQ++;
-        }
-
-        jMatriz++;
-    }
-
-    for (int k = 0; k < 5; k++) {
-        matriz Fx = funcaoDesvio(x, redePotencia);
-        matriz Jx = jacobianaDesvios(redePotencia);
+    redePotencia = leituraRede("2_Reticulada");
 
 
-        matriz R = resolveSistemaLinear(Jx, Fx);
 
-        for (int i = 0; i < R.numLinhas; i++)
-            x[i] += R.elemento[i][0];
-    }
+    fluxoDePotenciaNewton(redePotencia);
 
     for (int k = 0; k < redePotencia.numBarras; k++) {
-        printf("%d: %2.5f\n", redePotencia.barras[k].id, redePotencia.barras[k].tensao/redePotencia.barras[k].tensaoNominal);
+        printf("%d: %2.6f, %2.4f\n", redePotencia.barras[k].id, redePotencia.barras[k].tensao/redePotencia.barras[k].tensaoNominal, rad2Graus(redePotencia.barras[k].anguloTensao));
     }
 
     //testesZeroNewton();
