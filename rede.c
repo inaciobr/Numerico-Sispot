@@ -200,10 +200,12 @@ matriz jacobianaDesvios(rede r) {
                 M.elemento[iFP][jMatriz] = 0.0;
 
                 for (int i = 0; i < r.numBarras; i++) {
+                    if(i == j)
+                        continue;
                     angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
                     M.elemento[iFP][jMatriz] += r.barras[i].tensao
-                                                * (r.mNodal.condutancia.elemento[i][j]*sin(angulo)
-                                                    + r.mNodal.susceptancia.elemento[i][j]*cos(angulo));
+                                                * (r.mNodal.condutancia.elemento[j][i]*sin(angulo)
+                                                    + r.mNodal.susceptancia.elemento[j][i]*cos(angulo));
                 }
 
                 M.elemento[iFP][jMatriz] *= r.barras[j].tensao;
@@ -232,12 +234,17 @@ matriz jacobianaDesvios(rede r) {
                 continue;
 
             if (iFP == jMatriz) {
-                M.elemento[iFP][r.numPQ + r.numPV + jMatriz] = 0.0;
 
+                M.elemento[iFP][r.numPQ + r.numPV + jMatriz] = 0.0;
                 for (int i = 0; i < r.numBarras; i++) {
-                    angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
-                    M.elemento[iFP][r.numPQ + r.numPV + jMatriz] += r.barras[i].tensao * (r.mNodal.condutancia.elemento[j][i]*cos(angulo) - r.mNodal.susceptancia.elemento[j][i]*sin(angulo));
+                    if(i == j){
+                        M.elemento[iFP][r.numPQ + r.numPV + jMatriz] += 2*r.barras[j].tensao*r.mNodal.condutancia.elemento[j][j];
+                    } else {
+                        angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
+                        M.elemento[iFP][r.numPQ + r.numPV + jMatriz] += r.barras[i].tensao * (r.mNodal.condutancia.elemento[j][i]*cos(angulo) - r.mNodal.susceptancia.elemento[j][i]*sin(angulo));
+                    }
                 }
+
             } else {
                 angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
                 M.elemento[iFP][r.numPQ + r.numPV + jMatriz] = r.barras[j].tensao * (r.mNodal.condutancia.elemento[j][k]*cos(angulo) - r.mNodal.susceptancia.elemento[j][k]*sin(angulo));
@@ -265,6 +272,9 @@ matriz jacobianaDesvios(rede r) {
                 M.elemento[r.numPQ + r.numPV + iFP][jMatriz] = 0.0;
 
                 for (int i = 0; i < r.numBarras; i++) {
+                    if(i == j)
+                        continue;
+
                     angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
                     M.elemento[r.numPQ + r.numPV + iFP][jMatriz] += r.barras[i].tensao*(r.mNodal.condutancia.elemento[j][i]*cos(angulo) - r.mNodal.susceptancia.elemento[j][i]*sin(angulo));
                 }
@@ -299,10 +309,14 @@ matriz jacobianaDesvios(rede r) {
                 M.elemento[r.numPQ + r.numPV + iFP][jMatriz] = 0.0;
 
                 for (int i = 0; i < r.numBarras; i++) {
+                    if(i == j){
+                        M.elemento[r.numPQ + r.numPV + iFP][r.numPQ + r.numPV + jMatriz] += -2*r.barras[j].tensao*r.mNodal.susceptancia.elemento[j][j];
+                    } else {
                     angulo = r.barras[i].anguloTensao - r.barras[j].anguloTensao;
-                    M.elemento[r.numPQ + r.numPV + iFP][r.numPQ + r.numPV + jMatriz] += r.barras[i].tensao
+                    M.elemento[r.numPQ + r.numPV + iFP][r.numPQ + r.numPV + jMatriz] += -r.barras[i].tensao
                                                                                     * (r.mNodal.condutancia.elemento[j][i]*sin(angulo)
                                                                                         + r.mNodal.susceptancia.elemento[j][i]*cos(angulo));
+                     }
                 }
             } else {
                 angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
