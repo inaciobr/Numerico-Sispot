@@ -26,18 +26,16 @@ int main() {
         if (redePotencia.barras[k].tipo != B_PV)
             continue;
 
-        x[redePotencia.numPQ + jMatriz] = redePotencia.barras[k].tensao;
+        x[redePotencia.numPQ + jMatriz] = redePotencia.barras[k].anguloTensao;
 
         jMatriz++;
     }
 
-
-    matriz R;
-    for (int k = 0; k < MAX_ITERACOES; k++) {
+    for (int k = 0; k < 1; k++) {
         matriz Fx = funcaoDesvio(x, redePotencia);
         matriz Jx = jacobianaDesvios(redePotencia);
 
-        R = resolveSistemaLinear(Jx, Fx);
+        matriz R = resolveSistemaLinear(Jx, Fx);
 
         for (int i = 0; i < R.numLinhas; i++)
             x[i] += R.elemento[i][0];
@@ -46,6 +44,9 @@ int main() {
     for (int k = 0; k < 2*redePotencia.numPQ + redePotencia.numPV; k++) {
         printf("%f\n", x[k]);
     }
+
+
+    //testesZeroNewton();
 
     return 0;
 }

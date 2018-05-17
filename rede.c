@@ -105,47 +105,47 @@ void freeNodal(nodal *mNodal) {
     freeMatriz(&mNodal->susceptancia);
 }
 
+
 void fP(double resultado[], rede r) {
-    int j = 0;
-    for (int i = 0; i < r.numBarras; i++) {
-        if (r.barras[i].tipo == B_SWING)
+    int iFP = 0;
+    for (int j = 0; j < r.numBarras; j++) {
+        if (r.barras[j].tipo == B_SWING)
             continue;
 
-        resultado[j] = 0;
-
+        resultado[iFP] = 0.0;
         for (int k = 0; k < r.numBarras; k++) {
-            double angulo = r.barras[k].anguloTensao - r.barras[i].anguloTensao;
+            double angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
 
-            resultado[j] += r.barras[k].tensao * (r.mNodal.condutancia.elemento[i][k]*cos(angulo)
-                                                  - r.mNodal.susceptancia.elemento[i][k]*sin(angulo));
+            resultado[iFP] += r.barras[k].tensao * (r.mNodal.condutancia.elemento[j][k]*cos(angulo)
+                                                  - r.mNodal.susceptancia.elemento[j][k]*sin(angulo));
         }
 
-        resultado[j] *= r.barras[i].tensao;
+        resultado[iFP] *= r.barras[j].tensao;
 
-        if (r.barras[i].tipo == B_PV)
-            resultado[j] -= r.barras[i].potenciaAtiva;
+        if (r.barras[j].tipo == B_PV)
+            resultado[iFP] -= r.barras[j].potenciaAtiva;
 
-        j++;
+        iFP++;
     }
 }
 
 void fQ(double resultado[], rede r) {
-    int j = 0;
-    for (int i = 0; i < r.numBarras; i++) {
-        if (r.barras[i].tipo != B_PQ)
+    int iFP = 0;
+    for (int j = 0; j < r.numBarras; j++) {
+        if (r.barras[j].tipo != B_PQ)
             continue;
 
-        resultado[j] = 0.0;
+        resultado[iFP] = 0.0;
         for (int k = 0; k < r.numBarras; k++) {
-            double angulo = r.barras[k].anguloTensao - r.barras[i].anguloTensao;
+            double angulo = r.barras[k].anguloTensao - r.barras[j].anguloTensao;
 
-            resultado[j] += r.barras[k].tensao * ( r.mNodal.condutancia.elemento[i][k] * sin(angulo)
-                                                  + r.mNodal.susceptancia.elemento[i][k] * cos(angulo));
+            resultado[iFP] += r.barras[k].tensao * (r.mNodal.condutancia.elemento[j][k]*cos(angulo)
+                                                  - r.mNodal.susceptancia.elemento[j][k]*sin(angulo));
         }
 
-        resultado[j] *= -r.barras[i].tensao;
+        resultado[iFP] *= r.barras[j].tensao;
 
-        j++;
+        iFP++;
     }
 }
 
@@ -167,7 +167,7 @@ matriz funcaoDesvio(double x[], rede r) {
         }
     }
 
-    double resultado[2*r.numPQ + r.numPV];
+    double *resultado = calloc(2*r.numPQ + r.numPV, sizeof(double));
 
     fP(resultado, r);
     fQ(&resultado[r.numPQ + r.numPV], r);

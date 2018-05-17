@@ -173,6 +173,7 @@ matriz produtoMatriz(matriz M1, matriz M2){
 /// Resolve sistema da forma Ax = b, em que A = L.U///
 matriz resolveSistemaLinear(matriz A, matriz b) {
     int *P;
+    double soma;
     matriz LU = decomposicaoLU(A, &P);
 
     /// Permutando b///z
@@ -183,7 +184,7 @@ matriz resolveSistemaLinear(matriz A, matriz b) {
     /// Resolvendo Ly = b///
     matriz y = criaMatriz(A.numLinhas, 1);    /// Resolve sistema da forma Ax = b, em que A = L.U///
     for (int i = 0; i < A.numLinhas; i++) {
-        double soma = 0.0;
+        soma = 0.0;
 
         for (int j = 0; j < i; j++)
             soma += LU.elemento[i][j] * y.elemento[j][0];
@@ -193,10 +194,10 @@ matriz resolveSistemaLinear(matriz A, matriz b) {
 
     /// Resolvendo Ux = y///
     matriz x = criaMatriz(A.numLinhas, 1);
-    for (int i = A.numLinhas -1; i >= 0; i--) {
-        double soma = 0;
+    for (int i = A.numLinhas - 1; i >= 0; i--) {
+        soma = 0.0;
 
-        for (int j = 0; j < i; j++)
+        for (int j = i; j < A.numColunas; j++)
             soma += LU.elemento[i][j] * x.elemento[j][0];
 
         x.elemento[i][0] = (y.elemento[i][0] - soma) / LU.elemento[i][i];
