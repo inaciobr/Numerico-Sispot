@@ -29,6 +29,7 @@ int main() {
         matriz Fx = funcaoDesvio(x, redePotencia);
         matriz Jx = jacobianaDesvios(redePotencia);
 
+
         matriz R = resolveSistemaLinear(Jx, Fx);
 
         for (int i = 0; i < R.numLinhas; i++)

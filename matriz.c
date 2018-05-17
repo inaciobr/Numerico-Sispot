@@ -212,7 +212,7 @@ matriz resolveSistemaLinear(matriz A, matriz b) {
 void printMatriz(matriz M) {
     for (int i = 0; i < M.numLinhas; i++) {
         for (int j = 0; j < M.numColunas; j++)
-            printf("%15.3f ", M.elemento[i][j]);
+            printf("%15.2f ", M.elemento[i][j]);
 
         printf("\n");
     }
