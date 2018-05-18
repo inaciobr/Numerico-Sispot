@@ -229,19 +229,22 @@ void atualizaBarrasX(double x[], rede *r) {
 void atualizaRedePU(rede *r) {
 	r->perdaAtiva = r->potenciaAtivaGerada = r->potenciaAtivaAbsorvida = 0.0;
 	double angulo;
+	double condCarga = 0.0;
 
 	for (int j = 0; j < r->numBarras; j++) {
 		r->barras[j].valorPorUnidade = r->barras[j].tensao / r->barras[j].tensaoNominal;
+		condCarga = 0,0;
 
 		for (int k = 0; k < r->numBarras; k++) {
 			angulo = r->barras[k].anguloTensao - r->barras[j].anguloTensao;
 			r->potenciaAtivaGerada += 3 * r->barras[j].tensao * r->barras[k].tensao * (r->mNodal.condutancia.elemento[j][k] * cos(angulo) - r->mNodal.susceptancia.elemento[j][k] * sin(angulo));
-			
-			// CORRIGIR
-			r->perdaAtiva -= 3 * (r->barras[j].tensao - r->barras[k].tensao) *(r->barras[j].tensao - r->barras[k].tensao)  * r->mNodal.condutancia.elemento[j][k];
+            condCarga += r->mNodal.condutancia.elemento[j][k];
 		}
+		r->potenciaAtivaAbsorvida += condCarga*r->barras[j].tensao*r->barras[j].tensao;
+
 	}
-	r->potenciaAtivaAbsorvida = r->potenciaAtivaGerada - r->perdaAtiva;
+    r->potenciaAtivaAbsorvida *= 3;
+	r->perdaAtiva = r->potenciaAtivaGerada - r->potenciaAtivaAbsorvida;
 }
 
 void printDadosRede(rede *r) {
