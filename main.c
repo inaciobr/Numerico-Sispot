@@ -1,22 +1,26 @@
 #include <stdio.h>
 
 #include "rede.h"
-#include "matriz.h"
 #include "numerico.h"
 
 int main() {
-    rede redePotencia;
-    redePotencia = leituraRede("2_Reticulada");
+	char *redes[4] = { "Redes/1_Stevenson/1_Stevenson",
+					   "Redes/2_Reticulada/2_Reticulada",
+		               "Redes/3_Distribuicao_Primaria/3_Distribuicao_Primaria",
+		               "Redes/4_Distribuicao_Pri_Sec/4_Distribuicao_Primaria_Secundaria" };
 
+	int num = 0;
 
+	printf("EP 1 - Fluxo de potencia em redes eletricas pelo metodo de Newton\n");
+	printf("Analise de: %s\n\n", redes[num]);
 
-    fluxoDePotenciaNewton(redePotencia);
+    rede *r;
+    r = leituraRede(redes[num]);
 
-    for (int k = 0; k < redePotencia.numBarras; k++) {
-        printf("%d: %2.6f, %2.4f\n", redePotencia.barras[k].id, redePotencia.barras[k].tensao/redePotencia.barras[k].tensaoNominal, rad2Graus(redePotencia.barras[k].anguloTensao));
-    }
+    fluxoDePotenciaNewton(r);
+	printDadosRede(r);
 
-    //testesZeroNewton();
+	system("pause");
 
     return 0;
 }

@@ -6,7 +6,7 @@
 #include "matriz.h"
 
 #define PI 3.14159265358979323846
-#define MAX_ITERACOES 20
+#define MAX_ITERACOES 10
 #define TOLERANCIA 1E-6
 
 

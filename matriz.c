@@ -1,4 +1,6 @@
 #include "matriz.h"
+#include <time.h>
+
 
 matriz criaMatriz(int numLinhas, int numColunas) {
     matriz M;
@@ -73,13 +75,14 @@ matriz copiaMatriz(matriz M) {
 }
 
 matriz decomposicaoLU(matriz M, int **permutacoes) {
-    matriz LU = copiaMatriz(M);
+    matriz LU = M;
     int *P = calloc((M.numLinhas + 1), sizeof(double));
+	double maxPivo, abs;
+	double *temp;
 
     for (int k = 0; k < M.numLinhas; k++) {
-        double maxPivo = -1.0;
-        double abs = 0.0;
-
+        maxPivo = -1.0;
+        abs = 0.0;
         for (int i = k; i < M.numLinhas; i++) {
             for (int j = 0; j < k; j++)
                 LU.elemento[i][k] -= LU.elemento[i][j] * LU.elemento[j][k];
@@ -93,7 +96,7 @@ matriz decomposicaoLU(matriz M, int **permutacoes) {
         }
 
         if (P[k] != k) {
-            double *temp = LU.elemento[k];
+            temp = LU.elemento[k];
             LU.elemento[k] = LU.elemento[P[k]];
             LU.elemento[P[k]] = temp;
 
@@ -109,6 +112,7 @@ matriz decomposicaoLU(matriz M, int **permutacoes) {
     }
 
     *permutacoes = P;
+
     return LU;
 }
 
@@ -201,7 +205,6 @@ matriz resolveSistemaLinear(matriz A, matriz b) {
         x.elemento[i][0] = (y.elemento[i][0] - soma) / LU.elemento[i][i];
     }
 
-    freeMatriz(&LU);
     freeMatriz(&y);
 
     return x;

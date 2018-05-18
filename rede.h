@@ -1,6 +1,8 @@
 #ifndef REDE_H_INCLUDED
 #define REDE_H_INCLUDED
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -18,15 +20,21 @@ typedef struct {
     int tipo;
 
     double tensaoNominal;
-    double anguloTensao;
-    double potenciaAtiva;
-    double potenciaReativa;
+	double potenciaAtivaNominal;
+	double potenciaReativaNominal;
 
     double valorPorUnidade;
     double tensao;
+	double anguloTensao;
+	double potenciaAtiva;
+	double potenciaReativa;
 } barra;
 
 typedef struct {
+	double potenciaAtivaGerada;
+	double potenciaAtivaAbsorvida;
+	double perdaAtiva;
+
     nodal mNodal;
 
     int numBarras;
@@ -43,21 +51,23 @@ enum tipoBarra {
     B_SWING       // Tipo 2
 };
 
-
-rede leituraRede(char rede[]);
+rede* leituraRede(char arquivo[]);
 void leituraBarra(rede *r, char arquivo[]);
 void leituraNodal(rede *r, char arquivo[]);
 
-void freeNodal(nodal *mNodal);
+void freeRede(rede *r);
 
-void fluxoDePotenciaNewton(rede r);
+void fluxoDePotenciaNewton(rede *r);
 
-matriz funcaoDesvio(matriz M, rede r);
-matriz jacobianaDesvios(matriz M, rede r);
+matriz funcaoDesvio(matriz M, rede *r);
+matriz jacobianaDesvios(matriz M, rede *r);
 
-void fP(double resultado[], rede r);
-void fQ(double resultado[], rede r);
+void fP(double resultado[], rede *r);
+void fQ(double resultado[], rede *r);
 
-void atualizaRede(double x[], rede r);
+void atualizaBarrasX(double x[], rede *r);
+void atualizaRedePU(rede *r);
+
+void printDadosRede(rede *r);
 
 #endif // REDE_H_INCLUDED
