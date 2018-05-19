@@ -7,8 +7,11 @@ rede* leituraRede(char arquivo[]) {
     r->numPV = 0;
     r->numSwing = 0;
 
+    memcpy(r->nome, arquivo, strlen(arquivo) + 1);
+
 	r->potenciaAtivaAbsorvida = 0.0;
 	r->potenciaAtivaGerada = 0.0;
+	r->perdaAtiva = 0.0;
 
     char caminho1[256], caminho2[256];
 
@@ -228,37 +231,57 @@ void atualizaBarrasX(double x[], rede *r) {
 
 void atualizaRedePU(rede *r) {
 	r->perdaAtiva = r->potenciaAtivaGerada = r->potenciaAtivaAbsorvida = 0.0;
-	double angulo;
-	double condCarga = 0.0;
+	double angulo, condutanciaCarga;
 
 	for (int j = 0; j < r->numBarras; j++) {
 		r->barras[j].valorPorUnidade = r->barras[j].tensao / r->barras[j].tensaoNominal;
-		condCarga = 0,0;
+		condutanciaCarga = 0.0;
 
 		for (int k = 0; k < r->numBarras; k++) {
 			angulo = r->barras[k].anguloTensao - r->barras[j].anguloTensao;
-			r->potenciaAtivaGerada += 3 * r->barras[j].tensao * r->barras[k].tensao * (r->mNodal.condutancia.elemento[j][k] * cos(angulo) - r->mNodal.susceptancia.elemento[j][k] * sin(angulo));
-            condCarga += r->mNodal.condutancia.elemento[j][k];
+			r->potenciaAtivaGerada += r->barras[j].tensao * r->barras[k].tensao * (r->mNodal.condutancia.elemento[j][k]*cos(angulo) - r->mNodal.susceptancia.elemento[j][k]*sin(angulo));
+            condutanciaCarga += r->mNodal.condutancia.elemento[j][k];
 		}
-		r->potenciaAtivaAbsorvida += condCarga*r->barras[j].tensao*r->barras[j].tensao;
+
+		r->potenciaAtivaAbsorvida += condutanciaCarga * r->barras[j].tensao * r->barras[j].tensao;
 
 	}
+
+	r->potenciaAtivaGerada *= 3;
     r->potenciaAtivaAbsorvida *= 3;
+
 	r->perdaAtiva = r->potenciaAtivaGerada - r->potenciaAtivaAbsorvida;
 }
 
-void printDadosRede(rede *r) {
-	printf("                       Resultados das barras\n");
-	printf("Barra | Modulo (PU) |  Angulo (o) | Modulo da tensao (V)\n");
-	for (int k = 0; k < r->numBarras; k++) {
-		printf("%5d | %11.6f | %11.4f | %15.3f\n", r->barras[k].id, r->barras[k].valorPorUnidade, rad2Graus(r->barras[k].anguloTensao), r->barras[k].tensao);
-	}
-	printf("\n\n");
+void printRede(rede *r, FILE *saida) {
+	fprintf(saida, "                       Resultados globais\n");
+	fprintf(saida, "Potencia ativa total gerada:   %15.3f (kW)\n", r->potenciaAtivaGerada / 1000.);
+	fprintf(saida, "Potencia ativa total de carga: %15.3f (kW)\n", r->potenciaAtivaAbsorvida / 1000.);
+	fprintf(saida, "Perda ativa total:             %15.3f (kW)\n", r->perdaAtiva / 1000.);
 
-	printf("                       Resultados globais\n");
-	printf("Potencia ativa total gerada:   %15.3f (kW)\n", r->potenciaAtivaGerada / 1000.);
-	printf("Potencia ativa total de carga: %15.3f (kW)\n", r->potenciaAtivaAbsorvida / 1000.);
-	printf("Perda ativa total:             %15.3f (kW)\n\n", r->perdaAtiva / 1000.);
+    fprintf(saida, "\n\n");
+
+	fprintf(saida, "                       Resultados das barras\n");
+	fprintf(saida, "Barra | Modulo (PU) |  Angulo (o) | Modulo da tensao (V)\n");
+
+	for (int k = 0; k < r->numBarras; k++)
+		fprintf(saida, "%5d | %11.6f | %11.4f | %15.3f\n", r->barras[k].id, r->barras[k].valorPorUnidade, rad2Graus(r->barras[k].anguloTensao), r->barras[k].tensao);
+}
+
+void printDadosRede(rede *r) {
+    printRede(r, stdout);
+}
+
+void arquivarDadosRede(rede *r) {
+    FILE *fp;
+    char caminho[256];
+
+    sprintf(caminho, "%s_resultados.txt", r->nome);
+    fp = fopen(caminho, "w");
+
+    printRede(r, fp);
+
+    fclose(fp);
 }
 
 matriz funcaoDesvio(matriz M, rede *r) {

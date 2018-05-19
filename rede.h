@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #include "matriz.h"
@@ -31,6 +32,8 @@ typedef struct {
 } barra;
 
 typedef struct {
+    char nome[256];
+
 	double potenciaAtivaGerada;
 	double potenciaAtivaAbsorvida;
 	double perdaAtiva;
@@ -69,5 +72,6 @@ void atualizaBarrasX(double x[], rede *r);
 void atualizaRedePU(rede *r);
 
 void printDadosRede(rede *r);
+void arquivarDadosRede(rede *r);
 
 #endif // REDE_H_INCLUDED
