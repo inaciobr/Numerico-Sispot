@@ -12,7 +12,6 @@ int main() {
 	int num = 0;
 
 	printf("EP 1 - Fluxo de potencia em redes eletricas pelo metodo de Newton\n");
-	printf("Analise de: %s\n\n", redes[num]);
 
     rede *r;
     r = leituraRede(redes[num]);

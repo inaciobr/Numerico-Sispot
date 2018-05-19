@@ -1,6 +1,4 @@
 #include "matriz.h"
-#include <time.h>
-
 
 matriz criaMatriz(int numLinhas, int numColunas) {
     matriz M;

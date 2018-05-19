@@ -235,37 +235,54 @@ void atualizaRedePU(rede *r) {
 
 	for (int j = 0; j < r->numBarras; j++) {
 		r->barras[j].valorPorUnidade = r->barras[j].tensao / r->barras[j].tensaoNominal;
-		condutanciaCarga = 0.0;
 
+		condutanciaCarga = 0.0;
 		for (int k = 0; k < r->numBarras; k++) {
 			angulo = r->barras[k].anguloTensao - r->barras[j].anguloTensao;
-			r->potenciaAtivaGerada += r->barras[j].tensao * r->barras[k].tensao * (r->mNodal.condutancia.elemento[j][k]*cos(angulo) - r->mNodal.susceptancia.elemento[j][k]*sin(angulo));
+			r->potenciaAtivaGerada += 3 * r->barras[j].tensao * r->barras[k].tensao * (r->mNodal.condutancia.elemento[j][k]*cos(angulo) - r->mNodal.susceptancia.elemento[j][k]*sin(angulo));
+
             condutanciaCarga += r->mNodal.condutancia.elemento[j][k];
 		}
 
-		r->potenciaAtivaAbsorvida += condutanciaCarga * r->barras[j].tensao * r->barras[j].tensao;
+        r->barras[j].potenciaAtiva = 0.0;
+        r->barras[j].potenciaReativa = 0.0;
 
+		r->potenciaAtivaAbsorvida += 3 * condutanciaCarga * r->barras[j].tensao * r->barras[j].tensao;
 	}
-
-	r->potenciaAtivaGerada *= 3;
-    r->potenciaAtivaAbsorvida *= 3;
 
 	r->perdaAtiva = r->potenciaAtivaGerada - r->potenciaAtivaAbsorvida;
 }
 
 void printRede(rede *r, FILE *saida) {
-	fprintf(saida, "                       Resultados globais\n");
-	fprintf(saida, "Potencia ativa total gerada:   %15.3f (kW)\n", r->potenciaAtivaGerada / 1000.);
-	fprintf(saida, "Potencia ativa total de carga: %15.3f (kW)\n", r->potenciaAtivaAbsorvida / 1000.);
-	fprintf(saida, "Perda ativa total:             %15.3f (kW)\n", r->perdaAtiva / 1000.);
-
-    fprintf(saida, "\n\n");
+	printf("Analise de: %s\n\n", r->nome);
 
 	fprintf(saida, "                       Resultados das barras\n");
 	fprintf(saida, "Barra | Modulo (PU) |  Angulo (o) | Modulo da tensao (V)\n");
 
 	for (int k = 0; k < r->numBarras; k++)
 		fprintf(saida, "%5d | %11.6f | %11.4f | %15.3f\n", r->barras[k].id, r->barras[k].valorPorUnidade, rad2Graus(r->barras[k].anguloTensao), r->barras[k].tensao);
+
+    fprintf(saida, "\n\n");
+
+	fprintf(saida, "                       Resultados dos trechos\n");
+	fprintf(saida, "Barra inicial | Barra final | Potencia ativa (kW) | Potencia reativa (kVAr) | Perda ativa (kW)\n");
+
+    for (int k = 0; k < r->numBarras; k++)
+        for (int j = k + 1; j < r->numBarras; j++)
+            if (r->mNodal.condutancia.elemento[k][j] || r->mNodal.susceptancia.elemento[k][j])
+                fprintf(saida, "%13d | %11d | %19.3f | %23.3f | %16.3f\n", r->barras[k].id,
+                                                                           r->barras[j].id,
+                                                                           (0.0) / 1000.,
+                                                                           (0.0) / 1000.,
+                                                                           (0.0) / 1000.);
+
+    fprintf(saida, "\n\n");
+
+	fprintf(saida, "                       Resultados globais\n");
+	fprintf(saida, "Potencia ativa total gerada:   %15.3f (kW)\n", r->potenciaAtivaGerada / 1000.);
+	fprintf(saida, "Potencia ativa total de carga: %15.3f (kW)\n", r->potenciaAtivaAbsorvida / 1000.);
+	fprintf(saida, "Perda ativa total:             %15.3f (kW)\n", r->perdaAtiva / 1000.);
+
 }
 
 void printDadosRede(rede *r) {
