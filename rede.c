@@ -451,6 +451,14 @@ double perdaTrecho(rede *r, int barra1, int barra2) {
     return -3 * deltaV * deltaV * r->mNodal.condutancia.elemento[barra1][barra2];
 }
 
+double fluxoPotencia(rede *r, int barra1, int barra2) {
+    double complex tensao1 = r->barras[barra1].tensao * cexp(1i*r->barras[barra1].anguloTensao);
+    double complex tensao2 = r->barras[barra2].tensao * cexp(1i*r->barras[barra2].anguloTensao);
+    double complex admitancia = -r->mNodal.condutancia.elemento[barra1][barra2] - 1i*r->mNodal.susceptancia.elemento[barra1][barra2];
+
+    return 3 * creal(tensao1 * conj((tensao1 - tensao2) * admitancia));
+}
+
 /**
  *
  */
@@ -473,7 +481,7 @@ void printRede(rede *r, FILE *saida) {
             if (r->mNodal.condutancia.elemento[k][j] || r->mNodal.susceptancia.elemento[k][j])
                 fprintf(saida, "%13d | %11d | %19.3f | %16.3f\n", r->barras[k].id,
                                                                            r->barras[j].id,
-                                                                           (0.0) / 1000.,
+                                                                           fluxoPotencia(r, k, j) / 1000.,
                                                                            perdaTrecho(r, k, j) / 1000.);
 
     fprintf(saida, "\n\n");
