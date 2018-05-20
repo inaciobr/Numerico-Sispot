@@ -71,6 +71,8 @@ void fQ(double resultado[], rede *r);
 void atualizaBarrasX(double x[], rede *r);
 void atualizaRedePU(rede *r);
 
+double perdaTrecho(rede *r, int barra1, int barra2);
+
 void printDadosRede(rede *r);
 void arquivarDadosRede(rede *r);
 

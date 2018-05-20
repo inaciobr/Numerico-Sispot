@@ -3,18 +3,20 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <complex.h>
 
 typedef struct {
-    int numLinhas;
-    int numColunas;
-    double **elemento;
+    int numLinhas;      /** Número de linhas da matriz. */
+    int numColunas;     /** Número de colunas da matriz. */
+    double **elemento;  /** Matriz do tipo double onde elementos da matriz são armazenados. */
 } matriz;
 
 matriz criaMatriz(int numLinhas, int numColunas);
 matriz copiaMatriz(matriz M);
 void freeMatriz(matriz *M);
 
-matriz multiplicaConstante(matriz matriz, double constante);
+matriz multiplicaConstante(matriz A, double constante);
 matriz produtoMatriz(matriz M, matriz v);
 matriz inversa(matriz M);
 matriz transposta(matriz M);
