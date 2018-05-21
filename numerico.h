@@ -17,6 +17,4 @@ void zeroNewton(int numX, double x[], void (*F)(double[], double[]), int numF, v
 int tolerancia(matriz R, double x[]);
 double rad2Graus(double angulo);
 
-void testesZeroNewton();
-
 #endif // NUMERICO_H_INCLUDED

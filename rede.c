@@ -125,7 +125,12 @@ void leituraNodal(rede *r, char arquivo[]) {
  * Desaloca memória usada para construir a rede
  */
 void freeRede(rede *r) {
+    r->potenciaAtivaGerada = r->potenciaAtivaAbsorvida = r->perdaAtiva = 0.0;
+    r->numBarras = r->numPQ = r->numPV = r->numSwing = 0;
 
+    freeMatriz(&r->mNodal.condutancia);
+    freeMatriz(&r->mNodal.susceptancia);
+    free(r->barras);
 }
 
 /**
@@ -491,8 +496,8 @@ void printRede(rede *r, FILE *saida) {
 	fprintf(saida, "Barra inicial | Barra final | Potencia ativa (kW) | Perda ativa (kW)\n");
 
     for (int k = 0; k < r->numBarras; k++)
-        for (int j = k + 1; j < r->numBarras; j++)
-            if (r->mNodal.condutancia.elemento[k][j] || r->mNodal.susceptancia.elemento[k][j])
+        for (int j = 0; j < r->numBarras; j++)
+            if ((r->mNodal.condutancia.elemento[k][j] || r->mNodal.susceptancia.elemento[k][j]) && k != j)
                 fprintf(saida, "%13d | %11d | %19.3f | %16.3f\n", r->barras[k].id,
                                                                            r->barras[j].id,
                                                                            fluxoPotencia(r, k, j) / 1000.,
@@ -504,7 +509,6 @@ void printRede(rede *r, FILE *saida) {
 	fprintf(saida, "Potencia ativa total gerada:   %15.3f (kW)\n", r->potenciaAtivaGerada / 1000.);
 	fprintf(saida, "Potencia ativa total de carga: %15.3f (kW)\n", r->potenciaAtivaAbsorvida / 1000.);
 	fprintf(saida, "Perda ativa total:             %15.3f (kW)\n", r->perdaAtiva / 1000.);
-
 }
 
 /**
