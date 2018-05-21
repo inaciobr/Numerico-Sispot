@@ -30,9 +30,12 @@ int main() {
         rede *r;
         r = leituraRede(redes[menu - 1]);
 
-        fluxoDePotenciaNewton(r);
+        int iteracoes;
+        iteracoes = fluxoDePotenciaNewton(r);
         printDadosRede(r);
         arquivarDadosRede(r);
+
+        printf("\nResultado em %d iteracoes.\n", iteracoes + 1);
 
         freeRede(r);
 	}
