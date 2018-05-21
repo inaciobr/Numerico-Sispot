@@ -57,7 +57,7 @@ void testesZeroNewton() {
 
     zeroNewton(4, x1, &F2x, 4, &dF);
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 5; i++)
         printf("%15.10f ", x1[i]);
 
     printf("\n\n");
