@@ -1,5 +1,11 @@
 #include "numerico.h"
 
+/**
+ * Monta a matriz coluna de termo conhecido do método de newton.
+ * Recebe como argumento a matriz M onde os resultados serão salvos
+ * O vetor x de argumentos da função utilizada
+ * E um ponteiro para a função F que será utilizada para montar a matriz.
+ */
 matriz matrizFuncao(matriz M, double x[], void (*F)(double[], double[])) {
     double *valores = calloc(M.numLinhas, sizeof(double));
     F(x, valores);
@@ -12,6 +18,12 @@ matriz matrizFuncao(matriz M, double x[], void (*F)(double[], double[])) {
     return M;
 }
 
+/**
+ * Monta a matriz Jacobiana do método de newton.
+ * Recebe como argumento a matriz M onde os resultados serão salvos
+ * O vetor x de argumentos da função utilizada
+ * E um vetor de ponteiros para as funções F que serão utilizada para montar a matriz.
+ */
 matriz jacobiana(matriz M, double x[], void (*F[])(double[], double[])) {
     double *valores = calloc(M.numColunas, sizeof(double));
 
@@ -27,12 +39,21 @@ matriz jacobiana(matriz M, double x[], void (*F[])(double[], double[])) {
     return M;
 }
 
-void zeroNewton(int numX, double x[], void (*F)(double[], double[]), int numF, void (*dF[])(double[], double[])) {
+/**
+ * Método de newton para zero de funções.
+ * Recebe como argumento o número de variáveis utilizadas,
+ * um vetor x de valores iniciais e onde serão setados os valores
+ * finais do resultado do método de newton,
+ * um ponteiro para uma função F que se deseja zerar
+ * e um vetor de ponteiros para as derivadas da função F.
+ */
+int zeroNewton(int numX, double x[], void (*F)(double[], double[]), int numF, void (*dF[])(double[], double[])) {
     matriz Jx = criaMatriz(numF, numX);
     matriz Fx = criaMatriz(numX, 1);
     matriz R;
 
-    for (int k = 0; k < MAX_ITERACOES; k++) {
+    int k;
+    for (k = 0; k < MAX_ITERACOES; k++) {
         Fx = matrizFuncao(Fx, x, F);
         Jx = jacobiana(Jx, x, dF);
 
@@ -51,22 +72,27 @@ void zeroNewton(int numX, double x[], void (*F)(double[], double[]), int numF, v
 
     freeMatriz(&Jx);
     freeMatriz(&Fx);
+
+    return k;
 }
 
+/**
+ * Verifica a precisão do método de newton de forma relativa pela constante TOLERANCIA.
+ * Se o valor absoluto de algum termo no vetor x multiplicado pela tolerancia definida
+ * for maior do que a variação em uma iteração do método de newton, as iterações continuam,
+ * caso contrário o método de newton é finalizado.
+ */
 int tolerancia(matriz R, double x[]) {
-    double absX = 0.0, absR = 0.0;
+    for (int i = 0; i < R.numLinhas; i++)
+        if (fabs(R.elemento[i][0]) > TOLERANCIA * fabs(x[i]))
+            return 0;
 
-    for (int i = 0; i < R.numLinhas; i++) {
-        absR = R.elemento[i][0] > 0 ? R.elemento[i][0] : -R.elemento[i][0];
-        absX = x[i] > 0 ? x[i] : -x[i];
-
-        if (TOLERANCIA * absX > absR)
-            return 1;
-    }
-
-    return 0;
+    return 1;
 }
 
+/**
+ * Converte um ângulo de radianos para graus.
+ */
 double rad2Graus(double angulo) {
     return angulo * 180 / PI;
 }

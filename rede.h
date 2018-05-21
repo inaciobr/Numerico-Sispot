@@ -27,8 +27,6 @@ typedef struct {
     double valorPorUnidade;
     double tensao;
 	double anguloTensao;
-	double potenciaAtiva;
-	double potenciaReativa;
 } barra;
 
 typedef struct {
@@ -60,7 +58,7 @@ void leituraNodal(rede *r, char arquivo[]);
 
 void freeRede(rede *r);
 
-void fluxoDePotenciaNewton(rede *r);
+int fluxoDePotenciaNewton(rede *r);
 
 matriz funcaoDesvio(matriz M, rede *r);
 matriz jacobianaDesvios(matriz M, rede *r);
@@ -69,7 +67,7 @@ void fP(double resultado[], rede *r);
 void fQ(double resultado[], rede *r);
 
 void atualizaBarrasX(double x[], rede *r);
-void atualizaRedePU(rede *r);
+void atualizaRede(rede *r);
 
 double perdaTrecho(rede *r, int barra1, int barra2);
 

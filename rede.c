@@ -11,14 +11,15 @@ rede* leituraRede(char arquivo[]) {
     r->numPV = 0;
     r->numSwing = 0;
 
+    /* Armazena o nome da rede na estrutura. */
     memcpy(r->nome, arquivo, strlen(arquivo) + 1);
 
 	r->potenciaAtivaAbsorvida = 0.0;
 	r->potenciaAtivaGerada = 0.0;
 	r->perdaAtiva = 0.0;
 
+	/* Monta o caminho do arquivo de nós e de barras. */
     char caminho1[256], caminho2[256];
-
     sprintf(caminho1, "%s_DadosBarras.txt", arquivo);
     sprintf(caminho2, "%s_YNodal.txt", arquivo);
 
@@ -35,7 +36,7 @@ rede* leituraRede(char arquivo[]) {
 }
 
 /**
- * Identifica o tipo das barras e "seta" os valores nominais
+ * Identifica o tipo das barras e seta os valores nominais
  * conforme o tipo de cada barra
  */
 void leituraBarra(rede *r, char arquivo[]) {
@@ -56,7 +57,7 @@ void leituraBarra(rede *r, char arquivo[]) {
                                 &barrasArquivo[i].tipo,
                                 &barrasArquivo[i].tensaoNominal);
 
-        /* Valores especificados para a rede em cada caso */
+        /* Valores especificados para a rede para cada tipo de barra. */
         switch (barrasArquivo[i].tipo) {
         case B_PQ:
 			r->numPQ++;
@@ -95,7 +96,7 @@ void leituraBarra(rede *r, char arquivo[]) {
 
 /**
  * Monta a matriz de adimitância conforme os valores setados
- * no *.txt lido, zerando as entradas cujos índices não estão descritos
+ * no .txt lido, zerando as entradas cujos índices não estão descritos
  */
 void leituraNodal(rede *r, char arquivo[]) {
     FILE *fp;
@@ -122,7 +123,7 @@ void leituraNodal(rede *r, char arquivo[]) {
 }
 
 /**
- * Desaloca memória usada para construir a rede
+ * Desaloca memória alocada para construir a rede.
  */
 void freeRede(rede *r) {
     r->potenciaAtivaGerada = r->potenciaAtivaAbsorvida = r->perdaAtiva = 0.0;
@@ -134,16 +135,20 @@ void freeRede(rede *r) {
 }
 
 /**
- * Resolve o sistema a partir da facobiana utilizando do método de newton
+ * Resolve o fluxo de potência através da rede utilizando o método de Newton.
+ * Retorna o valor de iterações necessárias para convergir de acordo com a precisão
+ * especificada.
  */
-void fluxoDePotenciaNewton(rede *r) {
+int fluxoDePotenciaNewton(rede *r) {
     matriz Jx = criaMatriz(2*r->numPQ + r->numPV, 2*r->numPQ + r->numPV);
     matriz Fx = criaMatriz(2*r->numPQ + r->numPV, 1);
     matriz R;
 
     double *x = calloc(2*r->numPQ + r->numPV, sizeof(double));
 
-    // Valores iniciais de x.
+    /* Valores iniciais de x, onde os valores de 0 a (r->numPQ + r->numPV - 1)
+       representam os valores do angulo da tensão e os valores de
+       (r->numPQ + r->numPV) a (2*r->numPQ + r->numPV) representam os valores da tensão. */
     int jMatriz = 0, jPQ = 0;
     for (int k = 0; k < r->numBarras; k++) {
         if (r->barras[k].tipo == B_SWING)
@@ -158,8 +163,11 @@ void fluxoDePotenciaNewton(rede *r) {
 
         jMatriz++;
     }
+
+    /* Método de Newton. */
 	int k;
     for (k = 0; k < MAX_ITERACOES; k++) {
+        printf(".");
         Fx = funcaoDesvio(Fx, r);
         Jx = jacobianaDesvios(Jx, r);
 
@@ -170,6 +178,7 @@ void fluxoDePotenciaNewton(rede *r) {
 
 		atualizaBarrasX(x, r);
 
+		/* Verificação da precisão dos valores obtidos através de definição nos arquivos de numérico. */
         if (tolerancia(R, x)) {
             freeMatriz(&R);
             break;
@@ -178,16 +187,20 @@ void fluxoDePotenciaNewton(rede *r) {
         freeMatriz(&R);
     }
 
+    printf("\n");
+
     free(x);
 
     freeMatriz(&Jx);
     freeMatriz(&Fx);
 
-	atualizaRedePU(r);
+	atualizaRede(r);
+
+	return k;
 }
 
 /**
- * Calcula desvio de potência ativa
+ * Calcula desvio de potência ativa.
  */
 void fP(double resultado[], rede *r) {
     int iFP = 0;
@@ -216,7 +229,7 @@ void fP(double resultado[], rede *r) {
 }
 
 /**
- * Calcula os devios entre a potencia reativa
+ * Calcula os devios entre a potencia reativa.
  */
 void fQ(double resultado[], rede *r) {
     int iFP = 0;
@@ -241,7 +254,9 @@ void fQ(double resultado[], rede *r) {
 }
 
 /**
- *
+ * Atualiza os valores na estrutura de barras de acordo com o vetor x
+ * utilizado no método de newton. Os valores atualizados são usados para
+ * montar as matrizes do método de newton.
  */
 void atualizaBarrasX(double x[], rede *r) {
     int jMatriz = 0, jPQ = 0;
@@ -262,10 +277,10 @@ void atualizaBarrasX(double x[], rede *r) {
 }
 
 /**
- * Além de calcular a tensão em valor percentual
- * calcula também os resultados globais da rede -Potencia ativa gerada, utilizada, perdida-
+ * Atualiza os valores de PU de cada barra e os resultados globais da
+ * rede: Potencia ativa gerada, potencia ativa utilizada e perdida ativa.
  */
-void atualizaRedePU(rede *r) {
+void atualizaRede(rede *r) {
 	r->perdaAtiva = r->potenciaAtivaGerada = r->potenciaAtivaAbsorvida = 0.0;
 	double angulo, condutanciaCarga;
 
@@ -280,9 +295,6 @@ void atualizaRedePU(rede *r) {
             condutanciaCarga += r->mNodal.condutancia.elemento[j][k];
 		}
 
-        r->barras[j].potenciaAtiva = 0.0;
-        r->barras[j].potenciaReativa = 0.0;
-
 		r->potenciaAtivaAbsorvida += 3 * condutanciaCarga * r->barras[j].tensao * r->barras[j].tensao;
 	}
 
@@ -290,8 +302,8 @@ void atualizaRedePU(rede *r) {
 }
 
 /**
- * seta os valores de desvio(FP e FQ) na posição desejada na matriz resultados
- * do sistema linear --- (J x = F), onde F é a matriz de resultados
+ * Define os valores de desvio (FP e FQ) na posição desejada na matriz
+ * resultados do sistema linear --- (J x = F), onde F é a matriz de resultados
  */
 matriz funcaoDesvio(matriz M, rede *r) {
     double *resultado = calloc(2*r->numPQ + r->numPV, sizeof(double));
@@ -308,8 +320,6 @@ matriz funcaoDesvio(matriz M, rede *r) {
 }
 
 
-//double *theta = x;
-//double *tensao = &x[r->numPQ + r->numPV];
 /**
  * Calcula as entradas da matriz Jacobiana a partir das expressões fornecidas
  * no *.pdf do exercício.
@@ -317,7 +327,7 @@ matriz funcaoDesvio(matriz M, rede *r) {
 matriz jacobianaDesvios(matriz M, rede *r) {
     double angulo;
 
-    //del FP / del THETA => (r->numPQ + r->numPV) x (r->numPQ + r->numPV)
+    /* del FP / del THETA => Tamanho (r->numPQ + r->numPV) x (r->numPQ + r->numPV) */
     int jMatriz = 0, iFP = 0;
     for (int j = 0; j < r->numBarras; j++) {
         if (r->barras[j].tipo == B_SWING)
@@ -350,7 +360,7 @@ matriz jacobianaDesvios(matriz M, rede *r) {
         iFP++;
     }
 
-    //del FP / del V => (r->numPQ + r->numPV) x (r->numPQ)
+    /* del FP / del V => Tamanho (r->numPQ + r->numPV) x (r->numPQ) */
     iFP = 0;
     for (int j = 0; j < r->numBarras; j++) {
         if (r->barras[j].tipo == B_SWING)
@@ -384,7 +394,7 @@ matriz jacobianaDesvios(matriz M, rede *r) {
     }
 
 
-    //del FQ / del THETA => (r->numPQ) x (r->numPQ + r->numPV)
+    /* del FQ / del THETA => Tamanho (r->numPQ) x (r->numPQ + r->numPV) */
     iFP = 0;
     for (int j = 0; j < r->numBarras; j++) {
         if (r->barras[j].tipo != B_PQ)
@@ -418,7 +428,7 @@ matriz jacobianaDesvios(matriz M, rede *r) {
     }
 
 
-    //del FQ / del V => (r->numPQ) x (r->numPQ)
+    /* del FQ / del V => Tamanho (r->numPQ) x (r->numPQ) */
     iFP = 0;
     for (int j = 0; j < r->numBarras; j++) {
         if (r->barras[j].tipo != B_PQ)
@@ -456,7 +466,7 @@ matriz jacobianaDesvios(matriz M, rede *r) {
 
 /**
  * Calcula fasorialmente a diferença entre as tensões de barra e
- * depois obtém a potência ativa perdida entre os trechos
+ * depois obtém a potência ativa perdida entre os trechos.
  */
 double perdaTrecho(rede *r, int barra1, int barra2) {
     double complex tensao1 = r->barras[barra1].tensao * cexp(1i*r->barras[barra1].anguloTensao);
@@ -466,8 +476,8 @@ double perdaTrecho(rede *r, int barra1, int barra2) {
     return -3 * deltaV * deltaV * r->mNodal.condutancia.elemento[barra1][barra2];
 }
 /**
- * Calcula o fluco de potência entre duas barras a partir da diferença entre
- * as tesões de barra e a conrrente passante
+ * Calcula o fluxo de potência entre duas barras a partir da diferença entre
+ * as tesões de barra e a conrrente passante.
  */
 double fluxoPotencia(rede *r, int barra1, int barra2) {
     double complex tensao1 = r->barras[barra1].tensao * cexp(1i*r->barras[barra1].anguloTensao);
