@@ -4,6 +4,7 @@
 #include "numerico.h"
 
 int main() {
+    /****
     int numRedes = 4;
 	char *redes[4] = { "Redes/1_Stevenson/1_Stevenson",
 					   "Redes/2_Reticulada/2_Reticulada",
@@ -35,6 +36,7 @@ int main() {
 
         freeRede(r);
 	}
+	*/
 
 
     return 0;
