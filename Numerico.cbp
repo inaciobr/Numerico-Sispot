@@ -49,6 +49,7 @@
 		<Unit filename="testesNewton.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="testesNewton.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

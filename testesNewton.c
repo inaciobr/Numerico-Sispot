@@ -56,23 +56,24 @@ void JF2(matriz *M, double x[4]) {
 void F3(matriz *M, double x[]) {
     int N = M->numLinhas;
 
-    for (int i = 0; i < N - 1; i++)
-        M->elemento[0][0] = (i > 1 ? -x[i - 1] : 0.0) + 2.0*x[i] - x[i + 1] - exp(x[i])/(N*N);
-
+    for (int i = 0; i < N; i++)
+        M->elemento[i][0] = (!i ? 0.0 : -x[i - 1]) + 2.0*x[i]
+                            - (i + 1 == N ? 0.0 : x[i + 1])
+                            - exp(x[i])/((N + 1)*(N + 1));
 }
 
 void JF3(matriz *M, double x[]) {
     int N = M->numLinhas;
 
-    for (int i = 0; i < N; i++)
-        for (int j = 0; j < N; j++)
-            if (i == j)
-                M->elemento[i][j] = 2.0 - exp(x[i])/(N*N);
-            else if (i == j + 1 || i == j - 1)
-                M->elemento[i][j] = -1.0;
-            else
-                M->elemento[i][j] = 0.0;
+    for (int i = 0; i < N; i++) {
+        M->elemento[i][i] = 2.0 - exp(x[i])/((N + 1)*(N + 1));
+        M->elemento[i][i + 1] = -1.0;
+
+        if (i > 0)
+            M->elemento[i][i - 1] = -1.0;
+    }
 }
+
 void testesZeroNewton() {
     int iteracoes;
     printf("Testes iniciais:\n\n");
@@ -99,40 +100,44 @@ void testesZeroNewton() {
 
     /** Teste 3*/
     printf("3 - Sistema n - 1 x n - 1\n");
+    int N;
 
     /** Caso N = 20 */
     printf("a) N = 20\n");
-    double x3a[20] = {};
-    iteracoes = zeroNewton(20, x3a, &F3, &JF3);
+    N = 20 - 1;
+    double x3a[20 - 1] = {};
+    iteracoes = zeroNewton(N, x3a, &F3, &JF3);
 
     printf("x = {");
-    for (int i = 0; i < 20 - 1; i++)
-        printf("%.3f, ", x3a[i]);
-    printf("%.3f}\n", x3a[20 - 1]);
+    for (int i = 0; i < N - 1; i++)
+        printf("%.8f, ", x3a[i]);
+    printf("%.8f}\n", x3a[N - 1]);
 
     printf("Resultado em %d iteracoes.\n\n", iteracoes + 1);
 
     /** Caso N = 40 */
     printf("a) N = 40\n");
-    double x3b[40] = {};
-    iteracoes = zeroNewton(40, x3b, &F3, &JF3);
+    N = 40 - 1;
+    double x3b[40 - 1] = {};
+    iteracoes = zeroNewton(N, x3b, &F3, &JF3);
 
     printf("x = {");
-    for (int i = 0; i < 40 - 1; i++)
-        printf("%.3f, ", x3b[i]);
-    printf("%.3f}\n", x3b[40 - 1]);
+    for (int i = 0; i < N - 1; i++)
+        printf("%.8f, ", x3b[i]);
+    printf("%.8f}\n", x3b[N - 1]);
 
     printf("Resultado em %d iteracoes.\n\n", iteracoes + 1);
 
     /** Caso N = 80 */
     printf("a) N = 80\n");
-    double x3c[80] = {};
-    iteracoes = zeroNewton(80, x3c, &F3, &JF3);
+    N = 80 - 1;
+    double x3c[80 - 1] = {};
+    iteracoes = zeroNewton(N, x3c, &F3, &JF3);
 
     printf("x = {");
-    for (int i = 0; i < 80 - 1; i++)
-        printf("%.3f, ", x3c[i]);
-    printf("%.3f}\n", x3c[80 - 1]);
+    for (int i = 0; i < N - 1; i++)
+        printf("%.8f, ", x3c[i]);
+    printf("%.8}\n", x3c[N - 1]);
 
     printf("Resultado em %d iteracoes.\n\n", iteracoes + 1);
 }
