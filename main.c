@@ -2,6 +2,7 @@
 
 #include "rede.h"
 #include "numerico.h"
+#include "testesNewton.h"
 
 int main() {
     int numRedes = 4;

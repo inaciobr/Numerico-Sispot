@@ -1,45 +1,6 @@
 #include "numerico.h"
 
 /**
- * Monta a matriz coluna de termo conhecido do método de newton.
- * Recebe como argumento a matriz M onde os resultados serão salvos
- * O vetor x de argumentos da função utilizada
- * E um ponteiro para a função F que será utilizada para montar a matriz.
- */
-matriz matrizFuncao(matriz M, double x[], void (*F)(double[], double[])) {
-    double *valores = calloc(M.numLinhas, sizeof(double));
-    F(x, valores);
-
-    for (int i = 0; i < M.numLinhas; i++)
-        M.elemento[i][0] = valores[i];
-
-    free(valores);
-
-    return M;
-}
-
-/**
- * Monta a matriz Jacobiana do método de newton.
- * Recebe como argumento a matriz M onde os resultados serão salvos
- * O vetor x de argumentos da função utilizada
- * E um vetor de ponteiros para as funções F que serão utilizada para montar a matriz.
- */
-matriz jacobiana(matriz M, double x[], void (*F[])(double[], double[])) {
-    double *valores = calloc(M.numColunas, sizeof(double));
-
-    for (int i = 0; i < M.numLinhas; i++) {
-        F[i](x, valores);
-
-        for (int j = 0; j < M.numColunas; j++)
-            M.elemento[j][i] = valores[j];
-    }
-
-    free(valores);
-
-    return M;
-}
-
-/**
  * Método de newton para zero de funções.
  * Recebe como argumento o número de variáveis utilizadas,
  * um vetor x de valores iniciais e onde serão setados os valores
@@ -47,15 +8,15 @@ matriz jacobiana(matriz M, double x[], void (*F[])(double[], double[])) {
  * um ponteiro para uma função F que se deseja zerar
  * e um vetor de ponteiros para as derivadas da função F.
  */
-int zeroNewton(int numX, double x[], void (*F)(double[], double[]), int numF, void (*dF[])(double[], double[])) {
-    matriz Jx = criaMatriz(numF, numX);
+int zeroNewton(int numX, double x[], void (*F)(matriz*, double[]), void (*J)(matriz*, double[])) {
+    matriz Jx = criaMatriz(numX, numX);
     matriz Fx = criaMatriz(numX, 1);
     matriz R;
 
     int k;
     for (k = 0; k < 5; k++) {
-        Fx = matrizFuncao(Fx, x, F);
-        Jx = jacobiana(Jx, x, dF);
+        F(&Fx, x);
+        J(&Jx, x);
 
         R = resolveSistemaLinear(Jx, multiplicaConstante(Fx, -1));
 
