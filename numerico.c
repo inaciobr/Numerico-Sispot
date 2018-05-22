@@ -1,5 +1,6 @@
 #include "numerico.h"
 
+/// ARRUMAR DESCRIÇÃO ///
 /**
  * Método de newton para zero de funções.
  * Recebe como argumento o número de variáveis utilizadas,
