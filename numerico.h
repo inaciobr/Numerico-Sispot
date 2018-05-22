@@ -7,7 +7,7 @@
 
 #define PI 3.14159265358979323846
 #define MAX_ITERACOES 10
-#define TOLERANCIA 1E-6
+#define TOLERANCIA 1E-5
 
 
 matriz matrizFuncao(matriz M, double x[], void (*F)(double[], double[]));

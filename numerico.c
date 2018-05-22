@@ -31,7 +31,7 @@ matriz jacobiana(matriz M, double x[], void (*F[])(double[], double[])) {
         F[i](x, valores);
 
         for (int j = 0; j < M.numColunas; j++)
-            M.elemento[i][j] = valores[j];
+            M.elemento[j][i] = valores[j];
     }
 
     free(valores);
@@ -53,7 +53,7 @@ int zeroNewton(int numX, double x[], void (*F)(double[], double[]), int numF, vo
     matriz R;
 
     int k;
-    for (k = 0; k < MAX_ITERACOES; k++) {
+    for (k = 0; k < 5; k++) {
         Fx = matrizFuncao(Fx, x, F);
         Jx = jacobiana(Jx, x, dF);
 

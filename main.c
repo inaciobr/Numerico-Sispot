@@ -4,7 +4,6 @@
 #include "numerico.h"
 
 int main() {
-    /****
     int numRedes = 4;
 	char *redes[4] = { "Redes/1_Stevenson/1_Stevenson",
 					   "Redes/2_Reticulada/2_Reticulada",
@@ -20,11 +19,16 @@ int main() {
         for (int i = 0; i < numRedes; i++) {
             printf("%d - %s\n", i + 1, redes[i]);
         }
+        printf("%d - Testar metodo de Newton\n", numRedes + 1);
 
         int menu;
         scanf("%d", &menu);
 
-        if (menu == 0)
+        if(menu == numRedes + 1) {
+            testesZeroNewton();
+            continue;
+        }
+        else if (menu == 0 || menu > numRedes + 1)
             return 0;
 
         rede *r;
@@ -32,14 +36,13 @@ int main() {
 
         int iteracoes;
         iteracoes = fluxoDePotenciaNewton(r);
+        printf("\nResultado em %d iteracoes.\n", iteracoes + 1);
+
         printDadosRede(r);
         arquivarDadosRede(r);
 
-        printf("\nResultado em %d iteracoes.\n", iteracoes + 1);
-
         freeRede(r);
 	}
-	*/
 
 
     return 0;
