@@ -167,7 +167,6 @@ int fluxoDePotenciaNewton(rede *r) {
     /* Método de Newton. */
 	int k;
     for (k = 0; k < MAX_ITERACOES; k++) {
-        printf(".");
         Fx = funcaoDesvio(Fx, r);
         Jx = jacobianaDesvios(Jx, r);
 
@@ -186,8 +185,6 @@ int fluxoDePotenciaNewton(rede *r) {
 
         freeMatriz(&R);
     }
-
-    printf("\n");
 
     free(x);
 
@@ -290,7 +287,9 @@ void atualizaRede(rede *r) {
 		condutanciaCarga = 0.0;
 		for (int k = 0; k < r->numBarras; k++) {
 			angulo = r->barras[k].anguloTensao - r->barras[j].anguloTensao;
-			r->potenciaAtivaGerada += 3 * r->barras[j].tensao * r->barras[k].tensao * (r->mNodal.condutancia.elemento[j][k]*cos(angulo) - r->mNodal.susceptancia.elemento[j][k]*sin(angulo));
+			r->potenciaAtivaGerada += 3 * r->barras[j].tensao * r->barras[k].tensao 
+								* (r->mNodal.condutancia.elemento[j][k]*cos(angulo)
+									 - r->mNodal.susceptancia.elemento[j][k]*sin(angulo));
 
             condutanciaCarga += r->mNodal.condutancia.elemento[j][k];
 		}
@@ -475,6 +474,7 @@ double perdaTrecho(rede *r, int barra1, int barra2) {
 
     return -3 * deltaV * deltaV * r->mNodal.condutancia.elemento[barra1][barra2];
 }
+
 /**
  * Calcula o fluxo de potência entre duas barras a partir da diferença entre
  * as tesões de barra e a conrrente passante.
@@ -482,7 +482,8 @@ double perdaTrecho(rede *r, int barra1, int barra2) {
 double fluxoPotencia(rede *r, int barra1, int barra2) {
     double complex tensao1 = r->barras[barra1].tensao * cexp(1i*r->barras[barra1].anguloTensao);
     double complex tensao2 = r->barras[barra2].tensao * cexp(1i*r->barras[barra2].anguloTensao);
-    double complex admitancia = -r->mNodal.condutancia.elemento[barra1][barra2] - 1i*r->mNodal.susceptancia.elemento[barra1][barra2];
+    double complex admitancia = -r->mNodal.condutancia.elemento[barra1][barra2]
+								 - 1i*r->mNodal.susceptancia.elemento[barra1][barra2];
 
     return 3 * creal(tensao1 * conj((tensao1 - tensao2) * admitancia));
 }

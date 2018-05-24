@@ -6,6 +6,7 @@
 
 int main() {
     int numRedes = 4;
+    /* Base dos arquivos de rede. Cada rede possui dois arquivos com nomes no formato *_DadosBarras.txt e *_Ynodal.txt  */
 	char *redes[4] = { "Redes/1_Stevenson/1_Stevenson",
 					   "Redes/2_Reticulada/2_Reticulada",
 		               "Redes/3_Distribuicao_Primaria/3_Distribuicao_Primaria",
@@ -29,8 +30,9 @@ int main() {
             testesZeroNewton();
             continue;
         }
-        else if (menu == 0 || menu > numRedes + 1)
+        else if (menu == 0 || menu > numRedes + 1) {
             return 0;
+        }
 
         rede *r;
         r = leituraRede(redes[menu - 1]);
@@ -39,7 +41,10 @@ int main() {
         iteracoes = fluxoDePotenciaNewton(r);
         printf("\nResultado em %d iteracoes.\n", iteracoes + 1);
 
+        /* Imprime resultados no terminal */
         printDadosRede(r);
+
+        /* Salva os resultados em um arquivo*/
         arquivarDadosRede(r);
 
         freeRede(r);

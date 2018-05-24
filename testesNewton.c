@@ -2,12 +2,13 @@
 
 /** TESTES INICIAIS */
 
-/** Teste 1*/
+/** Teste 1 */
 void F1(matriz *M, double x[2]) {
     M->elemento[0][0] = 2*(x[0] - 2);
     M->elemento[1][0]= 2*(x[1] - 3);
 }
 
+/** Jacobiana do teste 1 */
 void JF1(matriz *M, double x[2]) {
     /* dF1 / dx */
     M->elemento[0][0] = 2;
@@ -18,7 +19,8 @@ void JF1(matriz *M, double x[2]) {
     M->elemento[1][1] = 2;
 }
 
-/** Teste 2*/
+
+/** Teste 2 */
 void F2(matriz *M, double x[4]) {
     M->elemento[0][0] = 4*x[0] - x[1] + x[2] - x[0]*x[3];
     M->elemento[1][0] = -x[0] + 3*x[1] - 2*x[2] - x[1]*x[3];
@@ -26,6 +28,7 @@ void F2(matriz *M, double x[4]) {
     M->elemento[3][0] = x[0]*x[0] + x[1]*x[1] + x[2]*x[2] - 1;
 }
 
+/** Jacobiana do teste 2 */
 void JF2(matriz *M, double x[4]) {
     /* dF2 / dx1 */
     M->elemento[0][0] = 4 - x[3];
@@ -37,7 +40,7 @@ void JF2(matriz *M, double x[4]) {
     M->elemento[0][1] = -1;
     M->elemento[1][1] = 3 - x[3];
     M->elemento[2][1] = -2;
-    M->elemento[3][1] = 2*x[1];;
+    M->elemento[3][1] = 2*x[1];
 
     /* dF2 / dx3 */
     M->elemento[0][2] = 1;
@@ -52,7 +55,7 @@ void JF2(matriz *M, double x[4]) {
     M->elemento[3][3] = 0;
 }
 
-/** Teste 3*/
+/** Teste 3 */
 void F3(matriz *M, double x[]) {
     int N = M->numLinhas;
 
@@ -62,18 +65,24 @@ void F3(matriz *M, double x[]) {
                             - exp(x[i])/((N + 1)*(N + 1));
 }
 
+/** Jacobiana do teste 3 */
 void JF3(matriz *M, double x[]) {
     int N = M->numLinhas;
 
     for (int i = 0; i < N; i++) {
         M->elemento[i][i] = 2.0 - exp(x[i])/((N + 1)*(N + 1));
-        M->elemento[i][i + 1] = -1.0;
+
+		if (i + 1 < N)
+			M->elemento[i][i + 1] = -1.0;
 
         if (i > 0)
             M->elemento[i][i - 1] = -1.0;
     }
 }
 
+/**
+ * Exibe os resultados para os três testes iniciais apresentados no enunciado.
+*/
 void testesZeroNewton() {
     int iteracoes;
     printf("Testes iniciais:\n\n");
@@ -110,8 +119,8 @@ void testesZeroNewton() {
 
     printf("x = {");
     for (int i = 0; i < N - 1; i++)
-        printf("%.8f, ", x3a[i]);
-    printf("%.8f}\n", x3a[N - 1]);
+        printf("%.4f, ", x3a[i]);
+    printf("%.4f}\n", x3a[N - 1]);
 
     printf("Resultado em %d iteracoes.\n\n", iteracoes + 1);
 
@@ -123,8 +132,8 @@ void testesZeroNewton() {
 
     printf("x = {");
     for (int i = 0; i < N - 1; i++)
-        printf("%.8f, ", x3b[i]);
-    printf("%.8f}\n", x3b[N - 1]);
+        printf("%.4f, ", x3b[i]);
+    printf("%.4f}\n", x3b[N - 1]);
 
     printf("Resultado em %d iteracoes.\n\n", iteracoes + 1);
 
@@ -136,8 +145,8 @@ void testesZeroNewton() {
 
     printf("x = {");
     for (int i = 0; i < N - 1; i++)
-        printf("%.8f, ", x3c[i]);
-    printf("%.8}\n", x3c[N - 1]);
+        printf("%.4f, ", x3c[i]);
+    printf("%.4f}\n", x3c[N - 1]);
 
     printf("Resultado em %d iteracoes.\n\n", iteracoes + 1);
 }
